@@ -20,12 +20,12 @@
     if (!LenisCtor) return null;
 
     var lenis = new LenisCtor({
-      duration: 1.15,
+      duration: 0.65,
       smoothWheel: true,
-      wheelMultiplier: 0.9,
-      touchMultiplier: 1.05,
+      wheelMultiplier: 1.15,
+      touchMultiplier: 1.1,
       easing: function (t) {
-        return Math.min(1, 1.001 - Math.pow(2, -10 * t));
+        return 1 - Math.pow(1 - t, 3);
       },
     });
 
@@ -335,10 +335,59 @@
     },
   };
 
+  /** Kart/widget rayları: .prava-swiper-widget içindeki okları bağlar */
+  function getPravaSwiperWidgetNav(swiperEl) {
+    var wrap = swiperEl.closest('.prava-swiper-widget');
+    if (!wrap) return null;
+    var prev = wrap.querySelector('.prava-swiper-widget__btn--prev');
+    var next = wrap.querySelector('.prava-swiper-widget__btn--next');
+    if (!prev || !next) return null;
+    return { prevEl: prev, nextEl: next };
+  }
+
+  function wirePravaSwiperWidgetChrome(swiper) {
+    var wrap = swiper.el.closest('.prava-swiper-widget');
+    if (!wrap) return;
+    wrap.classList.toggle('prava-swiper-widget--locked', !!swiper.isLocked);
+  }
+
+  /** Scrollable + kilit sınıfı; userOn ile çakışmayı önlemek için aynı fn iki kez çağrılmaz */
+  function mergePravaSwiperWidgetChromeIntoOpts(opts) {
+    var userOn = opts.on || {};
+    opts.on = {};
+    ['init', 'resize', 'breakpoint', 'lock', 'unlock'].forEach(function (ev) {
+      opts.on[ev] = function () {
+        var base = PRAVA_SWIPER_SCROLLABLE_ON[ev];
+        var user = userOn[ev];
+        if (typeof base === 'function') base.call(this);
+        if (typeof user === 'function' && user !== base) user.call(this);
+        wirePravaSwiperWidgetChrome(this);
+      };
+    });
+    Object.keys(userOn).forEach(function (key) {
+      if (opts.on[key] !== undefined) return;
+      opts.on[key] = userOn[key];
+    });
+  }
+
+  /** Sağ alt pill + progressbar */
+  function applyPravaSwiperWidgetChrome(el, opts) {
+    var wrap = el.closest('.prava-swiper-widget');
+    if (!wrap) return;
+    var pag = wrap.querySelector('.prava-swiper-widget__pagination');
+    if (pag) {
+      opts.pagination = {
+        el: pag,
+        type: 'progressbar',
+      };
+    }
+    mergePravaSwiperWidgetChromeIntoOpts(opts);
+  }
+
   /* ── Kategori rayı (hero altı; ~3 tam + 4. kısmi) ───────────────────── */
   document.querySelectorAll('.prava-category-rail__swiper').forEach(function (el) {
     if (!el.querySelector('.swiper-slide')) return;
-    new Swiper(el, {
+    var opts = {
       slidesPerView: 1.12,
       spaceBetween: 14,
       speed: 450,
@@ -364,7 +413,11 @@
           spaceBetween: 28,
         },
       },
-    });
+    };
+    applyPravaSwiperWidgetChrome(el, opts);
+    var widgetNav = getPravaSwiperWidgetNav(el);
+    if (widgetNav) opts.navigation = widgetNav;
+    new Swiper(el, opts);
   });
 
   /* ── Ürün detay: ana galeri — mobilde Swiper (slidesPerView auto, genişlikler CSS); md+ enabled:false + grid CSS ── */
@@ -379,6 +432,7 @@
       /* Diğer ray swiper’lardan farklı: ürün görsellerinde özel kaydırma imleci yok */
       grabCursor: false,
       watchOverflow: true,
+      loop: true,
       breakpoints: {
         768: {
           enabled: false,
@@ -386,7 +440,10 @@
       },
     };
     if (pag) {
-      opts.pagination = { el: pag, clickable: true };
+      opts.pagination = {
+        el: pag,
+        type: 'progressbar',
+      };
     }
     new Swiper(el, opts);
   });
@@ -394,7 +451,7 @@
   /* ── Ürün detay: benzer ürünler (sections/main-product-detail — product-card-atc) ── */
   document.querySelectorAll('.prava-pdp-related__swiper').forEach(function (el) {
     if (!el.querySelector('.swiper-slide')) return;
-    new Swiper(el, {
+    var opts = {
       slidesPerView: 1.12,
       spaceBetween: 16,
       speed: 450,
@@ -419,13 +476,17 @@
           spaceBetween: 28,
         },
       },
-    });
+    };
+    applyPravaSwiperWidgetChrome(el, opts);
+    var widgetNav = getPravaSwiperWidgetNav(el);
+    if (widgetNav) opts.navigation = widgetNav;
+    new Swiper(el, opts);
   });
 
   /* ── Ürün detay: özellik kartları (metaobject list) ───────────────────── */
   document.querySelectorAll('[data-prava-pdp-features-swiper]').forEach(function (el) {
     if (!el.querySelector('.swiper-slide')) return;
-    new Swiper(el, {
+    var opts = {
       slidesPerView: 1.12,
       spaceBetween: 16,
       speed: 450,
@@ -450,7 +511,11 @@
           spaceBetween: 28,
         },
       },
-    });
+    };
+    applyPravaSwiperWidgetChrome(el, opts);
+    var widgetNav = getPravaSwiperWidgetNav(el);
+    if (widgetNav) opts.navigation = widgetNav;
+    new Swiper(el, opts);
   });
 
   /* ── Ürün detay: 360° görsel (Cloudimage 360 View; metafield images_360) ── */
@@ -498,7 +563,7 @@
   /* ── En çok satılanlar (yatay Swiper; masaüstünde ~3 kart) ──────────── */
   document.querySelectorAll('.prava-bestsellers__swiper').forEach(function (el) {
     if (!el.querySelector('.swiper-slide')) return;
-    var swiper = new Swiper(el, {
+    var bestsellerOpts = {
       slidesPerView: 1.12,
       spaceBetween: 16,
       speed: 450,
@@ -523,7 +588,11 @@
           spaceBetween: 28,
         },
       },
-    });
+    };
+    applyPravaSwiperWidgetChrome(el, bestsellerOpts);
+    var bestsellerNav = getPravaSwiperWidgetNav(el);
+    if (bestsellerNav) bestsellerOpts.navigation = bestsellerNav;
+    var swiper = new Swiper(el, bestsellerOpts);
 
     /* Hover’da başlayan ve her hover’da başa saran kart videoları */
     el.querySelectorAll('.prava-bestsellers-card').forEach(function (card) {
@@ -553,7 +622,7 @@
   /* ── Blog rayı: slidesPerView 'auto' + slayt genişliği CSS (300px) ───── */
   document.querySelectorAll('.prava-blog-rail__swiper').forEach(function (el) {
     if (!el.querySelector('.swiper-slide')) return;
-    new Swiper(el, {
+    var opts = {
       slidesPerView: 'auto',
       spaceBetween: 14,
       speed: 450,
@@ -577,7 +646,11 @@
           spaceBetween: 24,
         },
       },
-    });
+    };
+    applyPravaSwiperWidgetChrome(el, opts);
+    var widgetNav = getPravaSwiperWidgetNav(el);
+    if (widgetNav) opts.navigation = widgetNav;
+    new Swiper(el, opts);
   });
 
   /* ── Mega menü ─────────────────────────────────────────────────────── */
@@ -588,32 +661,6 @@
   var footerDiscover = document.getElementById('mega-footer-discover');
   var footerCta = document.getElementById('mega-footer-cta');
   var megaCloseDelayMs = 380;
-  var megaHoverLeaveTimer = null;
-
-  function isMegaDesktopHover() {
-    return typeof window.matchMedia === 'function' && window.matchMedia('(min-width: 1024px)').matches;
-  }
-
-  function cancelMegaHoverLeaveClose() {
-    if (megaHoverLeaveTimer) {
-      clearTimeout(megaHoverLeaveTimer);
-      megaHoverLeaveTimer = null;
-    }
-  }
-
-  function scheduleMegaHoverLeaveClose() {
-    if (!isMegaDesktopHover()) return;
-    if (!mega || mega.hasAttribute('hidden')) return;
-    cancelMegaHoverLeaveClose();
-    megaHoverLeaveTimer = setTimeout(function () {
-      megaHoverLeaveTimer = null;
-      if (mega && !mega.hasAttribute('hidden')) closeMegaMenu();
-    }, 220);
-  }
-
-  function isMegaHoverOpenLocked() {
-    return mega && mega._megaHoverOpenLockUntil && Date.now() < mega._megaHoverOpenLockUntil;
-  }
 
   function megaDrawerUsesMotion() {
     return (
@@ -623,10 +670,8 @@
     );
   }
 
-  function openMegaMenu(skipFocus) {
+  function openMegaMenu() {
     if (!mega || !btnMenu) return;
-    if (skipFocus && isMegaHoverOpenLocked()) return;
-    cancelMegaHoverLeaveClose();
     if (mega._megaCloseTimer) {
       clearTimeout(mega._megaCloseTimer);
       mega._megaCloseTimer = null;
@@ -641,7 +686,7 @@
       });
     });
     syncFooterFromPanel(getActivePanelIndex());
-    if (btnClose && !skipFocus) {
+    if (btnClose) {
       if (megaDrawerUsesMotion()) {
         setTimeout(function () {
           btnClose.focus();
@@ -655,10 +700,7 @@
   function closeMegaMenu() {
     if (!mega || !btnMenu) return;
     if (mega.hasAttribute('hidden')) return;
-    cancelMegaHoverLeaveClose();
     var delay = megaDrawerUsesMotion() ? megaCloseDelayMs : 0;
-    /* Kapatma + animasyon bitene kadar hover ile yeniden açmayı engelle (imleç hâlâ ikondayken tetiklenen mouseenter) */
-    mega._megaHoverOpenLockUntil = Date.now() + delay + 420;
     mega.classList.remove('mega-menu--open');
     if (mega._megaCloseTimer) clearTimeout(mega._megaCloseTimer);
     mega._megaCloseTimer = setTimeout(function () {
@@ -714,30 +756,8 @@
     }
 
     btnMenu.addEventListener('click', function () {
-      if (mega.hasAttribute('hidden')) openMegaMenu(false);
+      if (mega.hasAttribute('hidden')) openMegaMenu();
       else closeMegaMenu();
-    });
-
-    btnMenu.addEventListener('mouseenter', function () {
-      if (!isMegaDesktopHover()) return;
-      cancelMegaHoverLeaveClose();
-      if (mega.hasAttribute('hidden')) openMegaMenu(true);
-    });
-
-    btnMenu.addEventListener('mouseleave', function () {
-      if (!isMegaDesktopHover()) return;
-      if (mega.hasAttribute('hidden')) mega._megaHoverOpenLockUntil = 0;
-      scheduleMegaHoverLeaveClose();
-    });
-
-    mega.addEventListener('mouseenter', function () {
-      if (!isMegaDesktopHover()) return;
-      cancelMegaHoverLeaveClose();
-    });
-
-    mega.addEventListener('mouseleave', function () {
-      if (!isMegaDesktopHover()) return;
-      scheduleMegaHoverLeaveClose();
     });
 
     if (btnClose) btnClose.addEventListener('click', closeMegaMenu);
@@ -949,6 +969,7 @@
     var headings = gsap.utils.toArray('main h2').filter(function (el) {
       if (!el || el.dataset.headingReveal === 'off') return false;
       if (el.closest('#hero')) return false;
+      if (el.closest('.landing-history')) return false;
       if (el.closest('.prava-intro-split__text--line-reveal')) return false;
       return true;
     });
@@ -1090,23 +1111,37 @@
      * Her bölüm için statik gradient içeren bir <div.prava-bg-overlay> DOM'a enjekte edilir.
      * GSAP yalnızca bu elementin `opacity` değerini (0 → 1) animate eder.
      * opacity animasyonu compositor thread'de çalışır: repaint yok, style recalc yok,
-     * renk interpolasyonu yok. Baz renk sabit backgroundColor ile sağlanır.
+     * renk interpolasyonu yok. Baz renk bg-custom-color (#f5f5f3) ile aynıdır; geçiş
+     * bölüm girerken uzun süre düz renk, ortaya doğru gradient belirginleşir.
      */
+    var PRAVA_BG_BASE = '#f5f5f3';
     var bgConfigs = [
       {
         selector: '#blog-rail-bg-section',
-        base: '#f2efea',
-        gradient: 'linear-gradient(135deg, #e7e5e0 0%, #af847e 100%)',
+        base: PRAVA_BG_BASE,
+        gradient: 'linear-gradient(135deg, #fff2ec 0%, #ecc8bc 50%, #d49888 100%)',
+        scrollStart: 'top bottom',
+        scrollEnd: 'center center',
+        scrub: 0.7,
+        ease: 'power2.in',
       },
       {
         selector: '.site-footer',
-        base: '#f2efea',
-        gradient: 'linear-gradient(135deg, #e7e5e0 0%, #d5c834 100%)',
+        base: PRAVA_BG_BASE,
+        gradient: 'linear-gradient(135deg, #e9f0eb 0%, #e2c8cf 50%, #c4d8e8 100%)',
+        scrollStart: 'top 92%',
+        scrollEnd: 'center 58%',
+        scrub: 0.7,
+        ease: 'power2.in',
       },
       {
         selector: '#popular-split-bg-section',
-        base: '#f2efea',
+        base: PRAVA_BG_BASE,
         gradient: 'linear-gradient(135deg, #e7e2d6 0%, #d7d4b9 100%)',
+        scrollStart: 'top bottom',
+        scrollEnd: 'center center',
+        scrub: 0.75,
+        ease: 'power2.in',
       },
     ];
 
@@ -1122,16 +1157,21 @@
       overlay.setAttribute('aria-hidden', 'true');
       bgSection.insertBefore(overlay, bgSection.firstChild);
 
-      gsap.to(overlay, {
-        opacity: 1,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: bgSection,
-          start: 'top 88%',
-          end: 'bottom 42%',
-          scrub: 0.5,
-        },
-      });
+      gsap.fromTo(
+        overlay,
+        { opacity: 0 },
+        {
+          opacity: 1,
+          ease: cfg.ease || 'power2.in',
+          scrollTrigger: {
+            trigger: bgSection,
+            start: cfg.scrollStart || 'top bottom',
+            end: cfg.scrollEnd || 'center center',
+            scrub: cfg.scrub != null ? cfg.scrub : 0.7,
+            invalidateOnRefresh: true,
+          },
+        }
+      );
     });
   }
 

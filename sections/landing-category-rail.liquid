@@ -10,7 +10,8 @@
         {{ section.settings.description }}
       </div>
     {% endif %}
-    <div class="prava-category-rail__viewport mt-12 lg:mt-20">
+    <div class="prava-category-rail__viewport prava-swiper-widget mt-12 lg:mt-20">
+      {% render 'swiper-widget-arrows' %}
       <div class="swiper prava-category-rail__swiper w-full overflow-visible">
         <div class="swiper-wrapper">
           {% for block in section.blocks %}

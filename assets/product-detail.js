@@ -123,6 +123,40 @@
   var mainForm = document.getElementById('ProductForm-' + sectionId);
   bindAjaxAddToCart(mainForm);
 
+  /** Sepete ekle metnini başlıklardaki gibi harflere böl (heading-letter-wrap / heading-letter) */
+  function splitPdpAtcButtonLabel(btn) {
+    if (!btn || btn.disabled) return;
+    var label = btn.querySelector('.prava-pdp-atc-btn__label');
+    if (!label || label.getAttribute('data-prava-atc-letters') === 'ready') return;
+    var rawText = (label.textContent || '').trim();
+    if (!rawText) return;
+    label.setAttribute('data-prava-atc-letters', 'ready');
+    label.textContent = '';
+    var letterIndex = 0;
+    var words = rawText.split(/\s+/).filter(Boolean);
+    words.forEach(function (word, wordIndex) {
+      var wordWrap = document.createElement('span');
+      wordWrap.className = 'heading-word-nowrap';
+      for (var i = 0; i < word.length; i++) {
+        var wrap = document.createElement('span');
+        wrap.className = 'heading-letter-wrap';
+        var inner = document.createElement('span');
+        inner.className = 'heading-letter';
+        inner.textContent = word.charAt(i);
+        inner.style.setProperty('--prava-letter-i', String(letterIndex));
+        letterIndex += 1;
+        wrap.appendChild(inner);
+        wordWrap.appendChild(wrap);
+      }
+      label.appendChild(wordWrap);
+      if (wordIndex < words.length - 1) {
+        label.appendChild(document.createTextNode(' '));
+      }
+    });
+  }
+
+  splitPdpAtcButtonLabel(document.getElementById('PdpSubmit-' + sectionId));
+
   root.querySelectorAll('.prava-pdp-related-card form').forEach(function (f) {
     bindAjaxAddToCart(f);
   });
@@ -227,4 +261,272 @@
       } catch (e1) {}
     });
   }
+
+  /* PDP — tam ekran galeri modalı (yalnızca görseller; ok / şerit / kaydırma) */
+  var pdpGalleryModal = null;
+  var pdpGalleryModalEls = {};
+  var pdpGalleryItems = [];
+  var pdpGalleryIndex = 0;
+  var pdpGalleryLastFocus = null;
+  var pdpGalleryTouchStartX = 0;
+
+  function pdpGalleryCollectItems() {
+    var nodes = root.querySelectorAll('[data-prava-pdp-gallery-modal-open]');
+    return Array.prototype.map.call(nodes, function (n) {
+      return {
+        el: n,
+        src: n.getAttribute('data-prava-modal-src') || '',
+        thumb: n.getAttribute('data-prava-modal-thumb') || n.getAttribute('data-prava-modal-src') || '',
+        alt: n.getAttribute('data-prava-modal-alt') || '',
+      };
+    }).filter(function (x) {
+      return Boolean(x.src);
+    });
+  }
+
+  function pdpGalleryEnsureModal() {
+    if (pdpGalleryModal) return;
+    var i18n = window.PRAVA_I18N || {};
+    var modal = document.createElement('div');
+    modal.id = 'prava-pdp-gallery-modal';
+    modal.className = 'prava-pdp-gallery-modal';
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-hidden', 'true');
+    modal.setAttribute('aria-label', i18n.pdp_gallery_modal_title || 'Gallery');
+
+    modal.innerHTML =
+      '<div class="prava-pdp-gallery-modal__top">' +
+      '<p class="prava-pdp-gallery-modal__title" id="prava-pdp-gallery-modal-title"></p>' +
+      '<p class="prava-pdp-gallery-modal__counter" id="prava-pdp-gallery-modal-counter" aria-live="polite"></p>' +
+      '<button type="button" class="prava-pdp-gallery-modal__close" data-prava-pdp-gallery-modal-close>' +
+      '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>' +
+      '</button></div>' +
+      '<div class="prava-pdp-gallery-modal__stage" data-prava-pdp-gallery-modal-stage>' +
+      '<button type="button" class="prava-pdp-gallery-modal__nav prava-pdp-gallery-modal__nav--prev" data-prava-pdp-gallery-modal-prev hidden>' +
+      '<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>' +
+      '<img class="prava-pdp-gallery-modal__img" alt="" data-prava-pdp-gallery-modal-img>' +
+      '<button type="button" class="prava-pdp-gallery-modal__nav prava-pdp-gallery-modal__nav--next" data-prava-pdp-gallery-modal-next hidden>' +
+      '<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>' +
+      '</div>' +
+      '<div class="prava-pdp-gallery-modal__thumbs" data-prava-pdp-gallery-modal-thumbs></div>';
+
+    document.body.appendChild(modal);
+    var closeB = modal.querySelector('[data-prava-pdp-gallery-modal-close]');
+    var prevB = modal.querySelector('[data-prava-pdp-gallery-modal-prev]');
+    var nextB = modal.querySelector('[data-prava-pdp-gallery-modal-next]');
+    if (closeB) closeB.setAttribute('aria-label', i18n.pdp_gallery_modal_close || 'Close');
+    if (prevB) prevB.setAttribute('aria-label', i18n.pdp_gallery_modal_prev || 'Previous');
+    if (nextB) nextB.setAttribute('aria-label', i18n.pdp_gallery_modal_next || 'Next');
+    pdpGalleryModal = modal;
+    pdpGalleryModalEls = {
+      title: modal.querySelector('#prava-pdp-gallery-modal-title'),
+      counter: modal.querySelector('#prava-pdp-gallery-modal-counter'),
+      img: modal.querySelector('[data-prava-pdp-gallery-modal-img]'),
+      prev: modal.querySelector('[data-prava-pdp-gallery-modal-prev]'),
+      next: modal.querySelector('[data-prava-pdp-gallery-modal-next]'),
+      thumbs: modal.querySelector('[data-prava-pdp-gallery-modal-thumbs]'),
+      stage: modal.querySelector('[data-prava-pdp-gallery-modal-stage]'),
+    };
+    if (pdpGalleryModalEls.title) {
+      pdpGalleryModalEls.title.textContent = i18n.pdp_gallery_modal_title || 'Gallery';
+    }
+
+    modal.addEventListener('click', function (ev) {
+      if (ev.target.closest('[data-prava-pdp-gallery-modal-close]')) {
+        ev.preventDefault();
+        pdpGalleryCloseModal();
+      }
+    });
+    modal.addEventListener('click', function (ev) {
+      if (ev.target.closest('[data-prava-pdp-gallery-modal-prev]')) {
+        ev.preventDefault();
+        pdpGalleryStep(-1);
+      }
+    });
+    modal.addEventListener('click', function (ev) {
+      if (ev.target.closest('[data-prava-pdp-gallery-modal-next]')) {
+        ev.preventDefault();
+        pdpGalleryStep(1);
+      }
+    });
+    var thumbsHost = pdpGalleryModalEls.thumbs;
+    if (thumbsHost) {
+      thumbsHost.addEventListener('click', function (ev) {
+        var t = ev.target.closest('[data-prava-pdp-gallery-modal-thumb-idx]');
+        if (!t || !thumbsHost.contains(t)) return;
+        ev.preventDefault();
+        var idx = parseInt(t.getAttribute('data-prava-pdp-gallery-modal-thumb-idx'), 10);
+        if (!isNaN(idx)) pdpGalleryGoTo(idx);
+      });
+    }
+
+    var st = pdpGalleryModalEls.stage;
+    if (st) {
+      st.addEventListener('click', function (ev) {
+        if (ev.target === st) pdpGalleryCloseModal();
+      });
+      st.addEventListener(
+        'touchstart',
+        function (e) {
+          if (!e.touches || !e.touches[0]) return;
+          pdpGalleryTouchStartX = e.touches[0].clientX;
+        },
+        { passive: true }
+      );
+      st.addEventListener(
+        'touchend',
+        function (e) {
+          if (!e.changedTouches || !e.changedTouches[0]) return;
+          var dx = e.changedTouches[0].clientX - pdpGalleryTouchStartX;
+          if (Math.abs(dx) < 56) return;
+          if (dx > 0) pdpGalleryStep(-1);
+          else pdpGalleryStep(1);
+        },
+        { passive: true }
+      );
+    }
+  }
+
+  function pdpGalleryRenderThumbs() {
+    var host = pdpGalleryModalEls.thumbs;
+    if (!host) return;
+    host.textContent = '';
+    for (var i = 0; i < pdpGalleryItems.length; i++) {
+      (function (idx) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'prava-pdp-gallery-modal__thumb' + (idx === pdpGalleryIndex ? ' is-active' : '');
+        b.setAttribute('data-prava-pdp-gallery-modal-thumb-idx', String(idx));
+        b.setAttribute('aria-label', String(idx + 1));
+        var im = document.createElement('img');
+        im.src = pdpGalleryItems[idx].thumb;
+        im.alt = '';
+        im.loading = 'lazy';
+        im.decoding = 'async';
+        b.appendChild(im);
+        host.appendChild(b);
+      })(i);
+    }
+    if (pdpGalleryItems.length <= 1) {
+      host.hidden = true;
+      host.setAttribute('aria-hidden', 'true');
+    } else {
+      host.hidden = false;
+      host.removeAttribute('aria-hidden');
+    }
+  }
+
+  function pdpGalleryUpdateUi() {
+    var item = pdpGalleryItems[pdpGalleryIndex];
+    var imgEl = pdpGalleryModalEls.img;
+    if (item && imgEl) {
+      imgEl.src = item.src;
+      imgEl.alt = item.alt || '';
+    }
+    var c = pdpGalleryModalEls.counter;
+    if (c) {
+      c.textContent = String(pdpGalleryIndex + 1) + ' / ' + String(pdpGalleryItems.length);
+    }
+    var prev = pdpGalleryModalEls.prev;
+    var next = pdpGalleryModalEls.next;
+    if (prev) prev.hidden = pdpGalleryItems.length < 2;
+    if (next) next.hidden = pdpGalleryItems.length < 2;
+    var host = pdpGalleryModalEls.thumbs;
+    if (host && !host.hidden) {
+      var btns = host.querySelectorAll('.prava-pdp-gallery-modal__thumb');
+      for (var j = 0; j < btns.length; j++) {
+        btns[j].classList.toggle('is-active', j === pdpGalleryIndex);
+      }
+      var active = host.querySelector('[data-prava-pdp-gallery-modal-thumb-idx="' + pdpGalleryIndex + '"]');
+      if (active && typeof active.scrollIntoView === 'function') {
+        active.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
+      }
+    }
+  }
+
+  function pdpGalleryGoTo(idx) {
+    if (!pdpGalleryItems.length) return;
+    if (idx < 0) idx = pdpGalleryItems.length - 1;
+    if (idx >= pdpGalleryItems.length) idx = 0;
+    pdpGalleryIndex = idx;
+    pdpGalleryUpdateUi();
+  }
+
+  function pdpGalleryStep(delta) {
+    if (pdpGalleryItems.length < 2) return;
+    pdpGalleryGoTo(pdpGalleryIndex + delta);
+  }
+
+  function pdpGalleryOnKey(ev) {
+    if (ev.key === 'Escape') {
+      pdpGalleryCloseModal();
+      return;
+    }
+    if (pdpGalleryItems.length < 2) return;
+    if (ev.key === 'ArrowLeft') {
+      ev.preventDefault();
+      pdpGalleryStep(-1);
+    }
+    if (ev.key === 'ArrowRight') {
+      ev.preventDefault();
+      pdpGalleryStep(1);
+    }
+  }
+
+  function pdpGalleryOpenModal(startBtn) {
+    pdpGalleryItems = pdpGalleryCollectItems();
+    if (!pdpGalleryItems.length) return;
+    var start = 0;
+    for (var s = 0; s < pdpGalleryItems.length; s++) {
+      if (pdpGalleryItems[s].el === startBtn) {
+        start = s;
+        break;
+      }
+    }
+    pdpGalleryIndex = start;
+    pdpGalleryEnsureModal();
+    pdpGalleryLastFocus = document.activeElement;
+    pdpGalleryRenderThumbs();
+    pdpGalleryUpdateUi();
+    pdpGalleryModal.classList.add('prava-pdp-gallery-modal--open');
+    pdpGalleryModal.setAttribute('aria-hidden', 'false');
+    document.documentElement.classList.add('prava-pdp-gallery-modal-open');
+    document.addEventListener('keydown', pdpGalleryOnKey);
+    var closeBtn = pdpGalleryModal.querySelector('[data-prava-pdp-gallery-modal-close]');
+    window.setTimeout(function () {
+      if (closeBtn && typeof closeBtn.focus === 'function') {
+        try {
+          closeBtn.focus();
+        } catch (eF) {}
+      }
+    }, 40);
+  }
+
+  function pdpGalleryCloseModal() {
+    if (!pdpGalleryModal || !pdpGalleryModal.classList.contains('prava-pdp-gallery-modal--open')) return;
+    pdpGalleryModal.classList.remove('prava-pdp-gallery-modal--open');
+    pdpGalleryModal.setAttribute('aria-hidden', 'true');
+    document.documentElement.classList.remove('prava-pdp-gallery-modal-open');
+    document.removeEventListener('keydown', pdpGalleryOnKey);
+    var imgEl = pdpGalleryModalEls.img;
+    if (imgEl) {
+      imgEl.removeAttribute('src');
+      imgEl.alt = '';
+    }
+    if (pdpGalleryLastFocus && typeof pdpGalleryLastFocus.focus === 'function') {
+      try {
+        pdpGalleryLastFocus.focus();
+      } catch (eL) {}
+    }
+    pdpGalleryLastFocus = null;
+    pdpGalleryItems = [];
+  }
+
+  root.addEventListener('click', function (e) {
+    var btn = e.target && e.target.closest('[data-prava-pdp-gallery-modal-open]');
+    if (!btn || !root.contains(btn)) return;
+    e.preventDefault();
+    pdpGalleryOpenModal(btn);
+  });
 })();

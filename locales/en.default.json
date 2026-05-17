@@ -31,6 +31,11 @@
     "sold_out": "Sold out",
     "no_image": "No image",
     "gallery_thumbnails": "Product images",
+    "gallery_modal_open_aria": "Open image {{ index }} of {{ total }} in fullscreen gallery",
+    "gallery_modal_title": "Product gallery",
+    "gallery_modal_close": "Close gallery",
+    "gallery_modal_prev": "Previous image",
+    "gallery_modal_next": "Next image",
     "view_360": "360° view",
     "cart_add_error": "Could not add to cart. Refresh the page and try again.",
     "cart_add_network": "Network error. Check your connection and try again.",
@@ -52,6 +57,7 @@
   "templates": {
     "collection": {
       "category_nav_aria": "Browse categories",
+      "category_dropdown_label": "Choose category",
       "products_region_aria": "Products in this collection",
       "empty": "No products in this collection.",
       "sort_by_label": "Sort by",
@@ -99,7 +105,8 @@
     "social_youtube": "YouTube",
     "social_accounts_caption": "Follow us on social media",
     "tagline_since": "Since {{ year }}",
-    "copyright": "© {{ year }} {{ shop_name }} — All rights reserved."
+    "copyright": "© {{ year }} {{ shop_name }} — All rights reserved.",
+    "language_switcher_aria": "Choose site language"
   },
   "header": {
     "menu_visible": "Menu",

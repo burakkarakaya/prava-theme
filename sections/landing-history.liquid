@@ -1,0 +1,224 @@
+{% comment %}
+  Future-by-AI tarzı scroll sahnesi + stil seçici.
+  GSAP / ScrollTrigger tema layout'unda yüklü; bu bölüm landing-hero hemen altına gelir.
+{% endcomment %}
+{%- liquid
+  assign lh_bg = section.settings.background_color | default: '#ffffff'
+
+  comment
+    Varsayılan görseller (JS dışı) — paneldeki «Scroll kart görseli» boşsa kullanılır.
+    Panelden yükleme yapılırsa o slotta Shopify CDN URL'si geçerli olur.
+  endcomment
+  assign lh_placeholder_imgs = 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80,https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=800&q=80,https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=800&q=80,https://images.unsplash.com/photo-1433086966358-54859d0ed716?w=800&q=80,https://images.unsplash.com/photo-1501854140801-50d01698950b?w=800&q=80,https://images.unsplash.com/photo-1458668383970-8ddd3927deed?w=800&q=80,https://images.unsplash.com/photo-1482192505345-5852b0c49261?w=800&q=80,https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=800&q=80' | split: ','
+
+  assign gallery_parts = ''
+  assign gallery_slot = 0
+  assign has_gallery_blocks = false
+
+  for block in section.blocks
+    if block.type == 'gallery_image'
+      assign has_gallery_blocks = true
+
+      if block.settings.image != blank
+        assign img_src = block.settings.image | image_url: width: 800
+      else
+        assign slot_index = gallery_slot | modulo: 8
+        assign img_src = lh_placeholder_imgs[slot_index]
+      endif
+
+      assign img_json = img_src | json
+      if gallery_parts != ''
+        assign gallery_parts = gallery_parts | append: ','
+      endif
+      assign gallery_parts = gallery_parts | append: img_json
+      assign gallery_slot = gallery_slot | plus: 1
+    endif
+  endfor
+
+  unless has_gallery_blocks
+    for placeholder_url in lh_placeholder_imgs
+      assign img_json = placeholder_url | json
+      if gallery_parts != ''
+        assign gallery_parts = gallery_parts | append: ','
+      endif
+      assign gallery_parts = gallery_parts | append: img_json
+    endfor
+  endunless
+
+  assign gallery_json = '[' | append: gallery_parts | append: ']'
+-%}
+
+<section
+  id="landing-history-{{ section.id }}"
+  class="landing-history"
+  data-landing-history
+  data-gallery-images='{{ gallery_json }}'
+  style="--lh-bg: {{ lh_bg }};"
+  aria-label="{{ section.settings.section_aria_label | default: 'Tarihçe ve görsel deneyim' | escape }}"
+>
+  <div class="landing-history__scroll" data-landing-history-scroll>
+    <div class="landing-history__sticky">
+      <div class="landing-history__fade landing-history__fade--top" aria-hidden="true"></div>
+      <div class="landing-history__fade landing-history__fade--left" aria-hidden="true"></div>
+      <div class="landing-history__fade landing-history__fade--right" aria-hidden="true"></div>
+      <div class="landing-history__fade landing-history__fade--bottom" aria-hidden="true"></div>
+
+      <div class="landing-history__scene">
+        <div class="landing-history__stage" data-landing-history-stage></div>
+      </div>
+
+      <div class="landing-history__ui" data-landing-history-ui>
+        {%- liquid
+          if section.settings.eyebrow_page != blank
+            assign eyebrow_url = section.settings.eyebrow_page.url
+          elsif pages['hakkimizda'] != blank
+            assign eyebrow_url = pages['hakkimizda'].url
+          else
+            assign eyebrow_url = '/pages/hakkimizda'
+          endif
+        -%}
+        {%- if section.settings.eyebrow != blank -%}
+          <a href="{{ eyebrow_url }}" class="landing-history__eyebrow">
+            {{ section.settings.eyebrow | escape }}
+          </a>
+        {%- endif -%}
+        {%- if section.settings.headline != blank -%}
+          <h2
+            class="landing-history__headline"
+            data-heading-reveal="off"
+          >
+            {{ section.settings.headline }}
+          </h2>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Tarihçe — AI scroll",
+  "tag": "div",
+  "class": "landing-history-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "section_aria_label",
+      "label": "Erişilebilirlik etiketi",
+      "default": "Tarihçe ve görsel deneyim"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Arka plan rengi",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Scroll sahnesi metinleri"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Üst etiket",
+      "default": "PRAVA’nın Hikayesine Git"
+    },
+    {
+      "type": "page",
+      "id": "eyebrow_page",
+      "label": "Üst etiket bağlantısı",
+      "info": "Boş bırakılırsa «hakkimizda» sayfası kullanılır."
+    },
+    {
+      "type": "html",
+      "id": "headline",
+      "label": "Ana başlık (HTML)",
+      "default": "1983’ten Günümüze Prava"
+    },
+    {
+      "type": "header",
+      "content": "Scroll kart görselleri"
+    },
+    {
+      "type": "paragraph",
+      "content": "«Scroll kart görseli» bloklarından en fazla 8 görsel ekleyin. Boş bırakılan alanlar önizleme yer tutucusu ile doldurulur; kendi görselinizi yüklediğinizde o kartta sizin görseliniz kullanılır."
+    },
+    {
+      "type": "header",
+      "content": "Stil seçici"
+    },
+    {
+      "type": "text",
+      "id": "selection_tag",
+      "label": "Etiket",
+      "default": "Choose your style"
+    },
+    {
+      "type": "text",
+      "id": "selection_heading",
+      "label": "Başlık",
+      "default": "What will you create?"
+    },
+    {
+      "type": "text",
+      "id": "selection_text",
+      "label": "Açıklama",
+      "default": "Pick a visual style, then describe your vision"
+    },
+    {
+      "type": "text",
+      "id": "picker_aria_label",
+      "label": "Stil seçici erişilebilirlik etiketi",
+      "default": "Görsel stil seçimi"
+    },
+    {
+      "type": "text",
+      "id": "prompt_label",
+      "label": "Metin alanı etiketi (gizli)",
+      "default": "Görsel açıklaması"
+    },
+    {
+      "type": "text",
+      "id": "prompt_placeholder",
+      "label": "Metin alanı placeholder",
+      "default": "Describe what you want to create… e.g. 'A misty mountain range at dawn with warm golden light'"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Buton metni",
+      "default": "Generate Images →"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "gallery_image",
+      "name": "Scroll kart görseli",
+      "limit": 8,
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Kart görseli",
+          "info": "Boş bırakılırsa yer tutucu görsel kullanılır."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Tarihçe — AI scroll",
+      "blocks": [
+        { "type": "gallery_image" },
+        { "type": "gallery_image" },
+        { "type": "gallery_image" },
+        { "type": "gallery_image" },
+        { "type": "gallery_image" },
+        { "type": "gallery_image" },
+        { "type": "gallery_image" },
+        { "type": "gallery_image" }
+      ]
+    }
+  ]
+}
+{% endschema %}

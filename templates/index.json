@@ -12,11 +12,26 @@
     "landing_hero": {
       "type": "landing-hero",
       "blocks": {
-        "hero_slide_2": {
+        "slide_Xq9NeQ": {
           "type": "slide",
           "settings": {
             "title": "Yeni Sezon Geldi %30'a Varan İndirimle",
             "subtitle": "En yeni bebek arabası modelleri şimdi avantajlı fiyatlarla.",
+            "slide_media": "rahatlikla-buyuyen-mutlu-adimlar",
+            "slide_buttons": [
+              "satin-al"
+            ],
+            "theme": "dark",
+            "class_name": "",
+            "vertical_position": "items-center",
+            "horizontal_position": "justify-end text-right|ml-auto mr-0|ml-auto"
+          }
+        },
+        "hero_slide_2": {
+          "type": "slide",
+          "settings": {
+            "title": "Aileniz İçin Özel Kampanya Fırsatları",
+            "subtitle": "Kaliteli ve fonksiyonel bebek arabaları avantajlı seçeneklerle sizlerle.",
             "slide_media": "rahatlik-buyuyen-mutluluklar",
             "slide_buttons": [],
             "theme": "dark",
@@ -40,14 +55,57 @@
         }
       },
       "block_order": [
+        "slide_Xq9NeQ",
         "hero_slide_2",
         "hero_slide_1"
       ],
       "settings": {}
     },
+    "landing_history": {
+      "type": "landing-history",
+      "blocks": {
+        "gallery_1": { "type": "gallery_image", "settings": {} },
+        "gallery_2": { "type": "gallery_image", "settings": {} },
+        "gallery_3": { "type": "gallery_image", "settings": {} },
+        "gallery_4": { "type": "gallery_image", "settings": {} },
+        "gallery_5": { "type": "gallery_image", "settings": {} },
+        "gallery_6": { "type": "gallery_image", "settings": {} },
+        "gallery_7": { "type": "gallery_image", "settings": {} },
+        "gallery_8": { "type": "gallery_image", "settings": {} }
+      },
+      "block_order": [
+        "gallery_1",
+        "gallery_2",
+        "gallery_3",
+        "gallery_4",
+        "gallery_5",
+        "gallery_6",
+        "gallery_7",
+        "gallery_8"
+      ],
+      "settings": {
+        "background_color": "#ffffff",
+        "eyebrow": "PRAVA’nın Hikayesine Git",
+        "headline": "1983’ten Günümüze Prava",
+        "selection_tag": "Choose your style",
+        "selection_heading": "What will you create?",
+        "selection_text": "Pick a visual style, then describe your vision",
+        "prompt_placeholder": "Describe what you want to create… e.g. 'A misty mountain range at dawn with warm golden light'",
+        "button_label": "Generate Images →"
+      }
+    },
     "landing_category_rail": {
       "type": "landing-category-rail",
       "blocks": {
+        "collection_card_GK7z4n": {
+          "type": "collection_card",
+          "settings": {
+            "collection": "baston-bebek-arabasi-1",
+            "custom_title": "Kabin Boy Bebek Arabası",
+            "custom_image": "shopify://shop_images/prava-pars-luks-baston-bebek-arabasi-p09-gold-kahverengi-01_02_bd05983f-57c9-45ae-be98-f50dd26da7b0.png",
+            "cta_label": ""
+          }
+        },
         "collection_card_ppLYrY": {
           "type": "collection_card",
           "settings": {
@@ -76,6 +134,7 @@
         }
       },
       "block_order": [
+        "collection_card_GK7z4n",
         "collection_card_ppLYrY",
         "collection_card_mVaiW6",
         "collection_card_VMUX4Y"
@@ -149,6 +208,18 @@
     "landing_blog_rail": {
       "type": "landing-blog-rail",
       "blocks": {
+        "post_7PngwK": {
+          "type": "post",
+          "settings": {
+            "article": "stroller-guides/moduler-bebek-arabasi-nasil-secilir-2026"
+          }
+        },
+        "post_Xr9aKT": {
+          "type": "post",
+          "settings": {
+            "article": "stroller-guides/moduler-bebek-arabasi-nasil-secilir-2026"
+          }
+        },
         "post_zRUtm4": {
           "type": "post",
           "settings": {
@@ -163,6 +234,8 @@
         }
       },
       "block_order": [
+        "post_7PngwK",
+        "post_Xr9aKT",
         "post_zRUtm4",
         "RailPost1"
       ],
@@ -214,6 +287,7 @@
   },
   "order": [
     "landing_hero",
+    "landing_history",
     "landing_category_rail",
     "landing_intro_split",
     "landing_popular_split",

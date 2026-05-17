@@ -9,8 +9,10 @@
   data-section-id="{{ section.id }}"
 >
   {% if collection.metafields.custom.cover_image.value != blank %}
-    <header class="mb-8 flex flex-wrap items-center justify-between gap-4 md:mb-10 relative">
-      <div class="flex w-full flex-col gap-2 absolute bottom-0 left-0 z-[2] px-24 py-10">
+    {% assign cover_desktop = collection.metafields.custom.cover_image.value %}
+    {% assign cover_mobile = collection.metafields.custom.cover_mobile_image.value %}
+    <header class="lg:mb-1 flex flex-wrap items-center justify-between gap-4 relative">
+      <div class="flex w-full flex-col gap-2 absolute bottom-0 left-0 z-[2] lg:px-24 px-5 lg:py-10 py-5">
         <h1 class="w-full min-w-0 text-3xl text-white font-medium tracking-tight md:flex-1 md:text-4xl">
           {{ collection.metafields.custom.cover_image_title | escape }}
         </h1>
@@ -18,32 +20,41 @@
           {{ collection.metafields.custom.cover_image_description }}
         </span>
       </div>
-      <div class="w-full h-full">
+      <div class="relative aspect-[450/720] w-full overflow-hidden lg:aspect-auto">
         <div class="absolute inset-0 bg-[rgba(0,0,0,.1)] z-[1] pointer-events-none"></div>
-        <img
-          src="{{ collection.metafields.custom.cover_image.value | image_url: width: 2172 }}"
-          alt="{{ collection.metafields.custom.cover_image.value.alt | default: collection.title | escape }}"
-          class="w-full h-auto object-cover"
-          width="{{ collection.metafields.custom.cover_image.value.width }}"
-          height="{{ collection.metafields.custom.cover_image.value.height }}"
-          loading="eager"
-          decoding="async"
-        >
+        <picture>
+          {% if cover_mobile != blank %}
+            <source
+              media="(max-width: 1023px)"
+              srcset="{{ cover_mobile | image_url: width: 450 }} 450w, {{ cover_mobile | image_url: width: 900 }} 900w"
+              sizes="100vw"
+            >
+          {% endif %}
+          <img
+            src="{{ cover_desktop | image_url: width: 2172 }}"
+            alt="{{ cover_desktop.alt | default: collection.title | escape }}"
+            class="absolute inset-0 z-0 h-full w-full object-cover lg:relative lg:inset-auto lg:z-auto lg:h-auto lg:w-full"
+            width="{{ cover_desktop.width }}"
+            height="{{ cover_desktop.height }}"
+            loading="eager"
+            decoding="async"
+          >
+        </picture>
       </div>
     </header>
     <script>
       document.body.classList.add('list-cover-image');
     </script>
   {% endif %}
-  <div class="mx-auto max-w-[1680px] px-10 pb-16 pt-12 lg:pb-24 lg:pt-4">
+  <div class="mx-auto max-w-[1680px] px-5 lg:px-10 pb-16 pt-5 lg:pt-12 lg:pb-24 lg:pt-4">
     {% render 'breadcrumbs', current_title: collection.title %}
-    <div class="flex items-center justify-between mb-10">
+    <div class="mb-5 lg:mb-10 flex min-w-0 w-full flex-col items-center justify-between gap-y-4 lg:flex-row lg:gap-y-0">
       {% assign found_products_count = collection.products_count
         | default: collection.all_products_count
         | default: collection.products.size
       %}
       <nav
-        class="collection-all-categories overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        class="collection-all-categories w-full min-w-0 max-w-full overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden hidden lg:flex"
         aria-label="{{ 'templates.collection.category_nav_aria' | t }}"
       >
         <ul class="flex min-w-0 flex-nowrap gap-2 pb-1 md:flex-wrap md:gap-3" role="list">
@@ -65,7 +76,7 @@
         </ul>
       </nav>
 
-      <div class="flex w-full flex-wrap items-center justify-end gap-3 sm:gap-4 md:w-auto">
+      <div class="flex w-full items-center justify-end gap-3 sm:gap-4 md:w-auto">
         {% comment %}
           <span class="shrink-0 text-sm font-light text-neutral-700">
             {{ found_products_count }} ürün bulundu
@@ -119,7 +130,7 @@
         {% endif %}
         <div
           id="collection-grid-toggles-{{ section.id }}"
-          class="flex shrink-0 items-center gap-1"
+          class="flex shrink-0 items-center gap-1 hidden lg:flex"
           role="group"
           aria-label="{{ 'templates.collection.grid_view_group_aria' | t }}"
         >
@@ -193,7 +204,7 @@
         {% else %}
           {% assign banner = collection.metafields.custom.collection_banner.value %}
           <div
-            class="grid grid-cols-1 gap-10 sm:grid-cols-2 sm:gap-x-6 sm:gap-y-12 xl:grid-cols-3 xl:[&.is-collection-grid-4]:grid-cols-4"
+            class="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-x-6 sm:gap-y-6 xl:grid-cols-3 xl:[&.is-collection-grid-4]:grid-cols-4"
             data-collection-product-grid
           >
             <script>

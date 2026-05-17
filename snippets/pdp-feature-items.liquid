@@ -14,7 +14,8 @@
 %}
 
 {% if has_feature_cards %}
-  <section class="container product-features mt-48 mx-auto" aria-label="Ürün Detayı">
+  <section class="overflow-hidden" aria-label="Ürün Detayı">
+    <div class="container product-features lg:mt-48 mt-24 mx-auto px-5 lg:px-0">
     <div class="features-header mx-auto max-w-3xl text-center">
       <h2 class="text-3xl font-semibold tracking-tight text-neutral-900 md:text-6xl">Ürün Detayı</h2>
       {% if subtitle != blank %}
@@ -24,7 +25,8 @@
       {% endif %}
     </div>
 
-    <div class="mt-10">
+    <div class="mt-10 prava-swiper-widget">
+      {% render 'swiper-widget-arrows' %}
       <div class="swiper prava-pdp-features__swiper w-full xl:overflow-visible" data-prava-pdp-features-swiper>
         <div class="swiper-wrapper">
           {% for feature in features %}
@@ -46,7 +48,7 @@
                   {% endif %}
 
                   {% if feature.title.value != blank %}
-                    <h4 class="mt-4 text-[34px] font-medium leading-tight text-neutral-900">
+                    <h4 class="mt-4 lg:mt-6 text-left text-xl lg:text-[26px] font-normal leading-snug tracking-tight text-neutral-900 lg:text-3xl">
                       {{ feature.title.value }}
                     </h4>
                   {% endif %}
@@ -61,6 +63,7 @@
           {% endfor %}
         </div>
       </div>
+    </div>
     </div>
   </section>
 {% endif %}

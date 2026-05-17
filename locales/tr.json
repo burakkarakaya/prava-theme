@@ -31,6 +31,11 @@
     "sold_out": "Tükendi",
     "no_image": "Görsel yok",
     "gallery_thumbnails": "Ürün görselleri",
+    "gallery_modal_open_aria": "Görsel {{ index }} / {{ total }} — tam ekran galeriyi aç",
+    "gallery_modal_title": "Ürün görselleri",
+    "gallery_modal_close": "Galeriyi kapat",
+    "gallery_modal_prev": "Önceki görsel",
+    "gallery_modal_next": "Sonraki görsel",
     "view_360": "360° Görünüm",
     "cart_add_error": "Ürün sepete eklenemedi. Sayfayı yenileyip tekrar deneyin.",
     "cart_add_network": "Bağlantı hatası. İnternetinizi kontrol edip tekrar deneyin.",
@@ -52,6 +57,7 @@
   "templates": {
     "collection": {
       "category_nav_aria": "Kategorilere göz at",
+      "category_dropdown_label": "Kategori seç",
       "products_region_aria": "Bu koleksiyondaki ürünler",
       "empty": "Bu koleksiyonda ürün yok.",
       "sort_by_label": "Sırala",
@@ -99,7 +105,8 @@
     "social_youtube": "YouTube",
     "social_accounts_caption": "Sosyal medya hesaplarımız",
     "tagline_since": "{{ year }}'den beri",
-    "copyright": "© {{ year }} {{ shop_name }} — Tüm Hakları Saklıdır."
+    "copyright": "© {{ year }} {{ shop_name }} — Tüm Hakları Saklıdır.",
+    "language_switcher_aria": "Site dilini seçin"
   },
   "header": {
     "menu_visible": "Menü",

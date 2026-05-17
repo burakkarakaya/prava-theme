@@ -4,6 +4,7 @@
   "scripts": {
     "dev": "shopify theme dev --path .",
     "push": "shopify theme push --path .",
+    "pull": "shopify theme pull --path .",
     "login": "shopify auth login",
     "shopify": "shopify"
   },

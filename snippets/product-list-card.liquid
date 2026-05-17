@@ -107,12 +107,12 @@
           </video>
         {% endif %}
       </div>
-      <div class="flex flex-1 flex-col px-[30px] py-[30px]">
-        <h3 id="{{ uid }}" class="text-lg font-medium leading-snug tracking-tight text-neutral-900 md:text-xl">
+      <div class="flex flex-1 flex-col px-5 py-5 lg:p-5">
+        <h3 id="{{ uid }}" class="text-lg font-medium !leading-tight tracking-tight text-neutral-900 md:text-lg">
           {{ p.title }}
         </h3>
         {% if p.type != blank %}
-          <p class="mt-2 text-xs font-light uppercase tracking-wide text-neutral-500 md:text-sm">{{ p.type }}</p>
+          <p class="mt-2 mb-4 text-xs font-light uppercase tracking-wide text-neutral-500 md:text-sm">{{ p.type }}</p>
         {% endif %}
         <div class="mt-auto flex items-center justify-between gap-4">
           {% if color_option != blank and color_option.values.size > 0 %}

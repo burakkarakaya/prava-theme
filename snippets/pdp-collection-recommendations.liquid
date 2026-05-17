@@ -1,6 +1,7 @@
 {% comment %}
   pdp-collection-recommendations
   Ürünün ilk koleksiyonundan, kendisi hariç öneri ürünleri listeler.
+  Kart: snippets/product-list-card.liquid (liste / koleksiyon ile aynı).
 {% endcomment %}
 
 {% assign current_collection = product.collections.first %}
@@ -19,34 +20,20 @@
   {% endfor %}
 
   {% if available_count > 0 %}
-    <div class="mt-24">
+    <div class="container mt-24 mx-auto px-5 lg:px-0">
       <h2 class="text-3xl font-medium tracking-tight text-neutral-900 md:text-4xl">
         {{ 'sections.product_detail.related_products_title' | t }}
       </h2>
 
-      <ul class="mt-10 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4" aria-label="{{ current_collection.title | escape }} ürünleri">
+      <ul class="mt-10 grid grid-cols-1 gap-5 sm:gap-x-6 sm:gap-y-6 md:grid-cols-3 lg:grid-cols-4" aria-label="{{ current_collection.title | escape }} ürünleri">
         {% for rec in current_collection.products %}
           {% if rec.id != product.id and shown < rec_limit %}
-            {% assign rec_variant = rec.selected_or_first_available_variant %}
-            <li class="overflow-hidden rounded-lg bg-white">
-              <a href="{{ rec.url }}" class="group block">
-                {% if rec.featured_image != blank %}
-                  <img
-                    src="{{ rec.featured_image | image_url: width: 640 }}"
-                    alt="{{ rec.featured_image.alt | default: rec.title | escape }}"
-                    loading="lazy"
-                    width="320"
-                    height="320"
-                    class="aspect-square w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
-                  >
-                {% endif %}
-                <div class="p-3 md:p-4">
-                  <p class="line-clamp-2 text-sm text-neutral-900 md:text-base">{{ rec.title | escape }}</p>
-                  <p class="mt-2">
-                    {% render 'price-with-compare', variant: rec_variant, style: 'related' %}
-                  </p>
-                </div>
-              </a>
+            <li class="h-full">
+              {% render 'product-list-card',
+                product: rec,
+                title_id: 'related-' | append: rec.id,
+                image_loading: 'lazy'
+              %}
             </li>
             {% assign shown = shown | plus: 1 %}
           {% endif %}

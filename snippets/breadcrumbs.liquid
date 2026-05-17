@@ -2,8 +2,8 @@
   Basit sayfa yolu: Ana sayfa → [isteğe bağlı üst] → mevcut sayfa.
   Parametreler: current_title (zorunlu), parent_title, parent_url (üst düzey için ikisi birden)
 {% endcomment %}
-<nav class="breadcrumbs mb-6 text-sm font-light text-neutral-500 md:mb-8" aria-label="{{ 'general.breadcrumb.nav_aria' | t }}">
-  <ol class="flex flex-wrap items-center gap-x-2 gap-y-1">
+<nav class="breadcrumbs mb-4 text-sm font-light text-neutral-500 md:mb-8" aria-label="{{ 'general.breadcrumb.nav_aria' | t }}">
+  <ol class="flex flex-wrap items-center gap-x-2 gap-y-1 border-b border-neutral-200/90 pb-4">
     <li>
       <a
         href="{{ routes.root_url }}"

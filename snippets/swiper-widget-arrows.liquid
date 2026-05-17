@@ -1,0 +1,33 @@
+{% comment %}
+  Kart/widget rayları: pill içinde prev/next + ince progress çubuğu.
+  Üst sarmalayıcı .prava-swiper-widget; assets/js/main.js navigation + pagination (progressbar) bağlar.
+{% endcomment %}
+<div
+  class="prava-swiper-widget__controls"
+  role="group"
+  aria-label="{{ 'general.pagination.nav_aria' | t }}"
+>
+  <div class="prava-swiper-widget__pill">
+    <button
+      type="button"
+      class="prava-swiper-widget__btn prava-swiper-widget__btn--prev"
+      aria-label="{{ 'general.pagination.previous' | t }}"
+    >
+      <svg class="prava-swiper-widget__chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    <button
+      type="button"
+      class="prava-swiper-widget__btn prava-swiper-widget__btn--next"
+      aria-label="{{ 'general.pagination.next' | t }}"
+    >
+      <svg class="prava-swiper-widget__chevron prava-swiper-widget__chevron--flip" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+  </div>
+  <div class="prava-swiper-widget__progress-track">
+    <div class="swiper-pagination prava-swiper-widget__pagination"></div>
+  </div>
+</div>

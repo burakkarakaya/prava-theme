@@ -38,10 +38,11 @@
       <div class="swiper-wrapper">
         {% for block in section.blocks %}
           {% liquid
-            assign v_items = block.settings.vertical_position | strip
-            if v_items == blank
-              assign v_items = 'items-center'
+            assign v_items_raw = block.settings.vertical_position | strip
+            if v_items_raw == blank
+              assign v_items_raw = 'items-center'
             endif
+            assign v_items = 'max-lg:items-end max-lg:pb-28 lg:' | append: v_items_raw
 
             assign h_raw = block.settings.horizontal_position | strip
             assign h_parts = h_raw | split: '|'
@@ -56,7 +57,7 @@
             endif
 
             if h_outer contains 'text-right'
-              assign text_align_cls = 'text-right'
+              assign text_align_cls = 'text-right items-end'
             elsif h_outer contains 'text-center'
               assign text_align_cls = 'text-center'
             else
@@ -128,14 +129,14 @@
             %}
             <div class="absolute inset-0 bg-[rgba(0,0,0,.02)] z-[1] pointer-events-none"></div>
             <div class="hero-slide-content absolute inset-0 z-[2] flex {{ v_items }} {{ h_outer }} {{ layout_extra }}">
-              <div class="hero-slide-copy w-full max-w-[min(100%,560px)] px-5 lg:px-10 pt-[88px] {{ text_align_cls }} {{ copy_margin }} will-change-transform">
+              <div class="hero-slide-copy w-full flex flex-col max-w-[min(100%,560px)] px-5 lg:px-10 pt-0 lg:pt-[88px] {{ text_align_cls }} {{ copy_margin }} will-change-transform">
                 {% if block.settings.title != blank %}
-                  <h2 class="max-w-[16ch] {{ text_align_cls }} text-[clamp(2rem,4vw,3.2rem)] font-bold leading-[1.12] tracking-tight {{ title_clr }}">
+                  <h2 class="max-w-[16ch] {{ text_align_cls }} text-[clamp(1.5rem,3vw,3.2rem)] font-bold leading-[1.12] tracking-tight {{ title_clr }}">
                     {{ block.settings.title | newline_to_br }}
                   </h2>
                 {% endif %}
                 {% if block.settings.subtitle != blank %}
-                  <p class="mt-4 max-w-[36ch] {{ text_align_cls }} text-lg font-normal leading-relaxed {{ sub_clr }} {{ sub_extra }}">
+                  <p class="mt-2 lg:mt-4 max-w-[36ch] {{ text_align_cls }} text-base lg:text-lg font-normal leading-relaxed hidden lg:block {{ sub_clr }} {{ sub_extra }}">
                     {{ block.settings.subtitle | newline_to_br }}
                   </p>
                 {% endif %}

@@ -24,7 +24,8 @@
         {{ cta_visible }}
       </a>
     </div>
-    <div class="prava-bestsellers__viewport mt-10 md:mt-14">
+    <div class="prava-bestsellers__viewport prava-swiper-widget mt-10 md:mt-14">
+      {% render 'swiper-widget-arrows' %}
       <div class="swiper prava-bestsellers__swiper w-full">
         <div class="swiper-wrapper">
           {% assign first_bestseller_slide = 'yes' %}

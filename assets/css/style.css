@@ -76,10 +76,192 @@ body {
   z-index: 10;
 }
 
+/* Tarihçe — scroll kart sahnesi (landing-history.liquid) */
+.landing-history {
+  --lh-bg: #ffffff;
+  --lh-text: #0a0a0a;
+  --lh-text-muted: rgba(10, 10, 10, 0.45);
+  --lh-text-soft: rgba(10, 10, 10, 0.55);
+  --lh-border: rgba(10, 10, 10, 0.12);
+  position: relative;
+  z-index: 10;
+  background: var(--lh-bg);
+  color: var(--lh-text);
+  overflow-x: clip;
+}
+
+.landing-history__scroll {
+  height: calc(100svh + 78vh);
+  position: relative;
+}
+
+.landing-history__sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+  background: var(--lh-bg);
+}
+
+.landing-history__fade {
+  position: absolute;
+  pointer-events: none;
+  z-index: 6;
+}
+
+.landing-history__fade--top {
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 20%;
+  background: linear-gradient(to bottom, var(--lh-bg), transparent);
+}
+
+.landing-history__fade--bottom {
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 44%;
+  background: linear-gradient(to top, var(--lh-bg) 25%, transparent);
+}
+
+.landing-history__fade--left {
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 9%;
+  background: linear-gradient(to right, var(--lh-bg), transparent);
+}
+
+.landing-history__fade--right {
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 9%;
+  background: linear-gradient(to left, var(--lh-bg), transparent);
+}
+
+.landing-history__scene {
+  position: absolute;
+  inset: 0;
+  perspective: 1100px;
+  perspective-origin: 50% 44%;
+  contain: layout style;
+}
+
+.landing-history__stage {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+}
+
+.landing-history__card {
+  position: absolute;
+  border-radius: 0;
+  overflow: hidden;
+  contain: layout style paint;
+  will-change: transform, opacity;
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.12),
+    0 0 0 1px rgba(0, 0, 0, 0.06);
+}
+
+.landing-history__card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  pointer-events: none;
+}
+
+.landing-history__ui {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  pointer-events: none;
+  text-align: center;
+  padding-bottom: 4vh;
+  color: var(--lh-text);
+}
+
+.landing-history__eyebrow {
+  font-size: 16px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--lh-text-muted);
+  margin-bottom: 18px;
+  opacity: 0;
+  text-decoration: underline;
+  text-underline-offset: 0.35em;
+  pointer-events: auto;
+  cursor: pointer;
+  transition: color 0.2s ease, opacity 0.2s ease;
+}
+
+.landing-history__eyebrow:hover,
+.landing-history__eyebrow:focus-visible {
+  color: var(--lh-text);
+  outline: none;
+}
+
+.landing-history__headline {
+  margin: 0;
+  max-width: min(92vw, 14em);
+  text-align: center;
+  font-size: clamp(1.875rem, 0.5rem + 4vw, 4.375rem);
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  font-family: 'Sen', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  color: var(--lh-text);
+}
+
+.landing-history__headline-line {
+  display: block;
+}
+
+.landing-history__headline-line + .landing-history__headline-line {
+  margin-top: 0.12em;
+}
+
+.landing-history__headline .heading-letter-wrap {
+  padding-bottom: 0.32em;
+  margin-bottom: -0.32em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-history__scroll {
+    height: auto;
+  }
+
+  .landing-history__sticky {
+    position: relative;
+    min-height: 70vh;
+  }
+
+  .landing-history__eyebrow,
+  .landing-history__headline .heading-letter,
+  .landing-history__card {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
 #blog-rail-bg-section {
-  background-color: #f2efea;
+  background-color: #f5f5f3;
   position: relative;
   isolation: isolate;
+}
+
+#blog-rail-bg-section > :not(.prava-bg-overlay),
+#popular-split-bg-section > :not(.prava-bg-overlay) {
+  position: relative;
+  z-index: 1;
 }
 
 .site-footer {
@@ -150,7 +332,7 @@ body {
 }
 
 #popular-split-bg-section {
-  background-color: #f2efea;
+  background-color: #f5f5f3;
   position: relative;
   isolation: isolate;
 }
@@ -180,6 +362,39 @@ body {
   outline: 2px solid rgb(26 26 26 / 0.35);
   outline-offset: 3px;
   border-radius: 2px;
+}
+
+.site-footer__language-switcher form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.site-footer__language-switcher .language-switcher__btn {
+  margin: 0;
+  cursor: pointer;
+  border: 1px solid rgb(51 51 51 / 0.28);
+  border-radius: 9999px;
+  background: transparent;
+  padding: 0.35rem 0.85rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgb(51 51 51 / 0.92);
+  transition: opacity 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.site-footer__language-switcher .language-switcher__btn:hover {
+  opacity: 0.75;
+  border-color: rgb(51 51 51 / 0.45);
+}
+
+.site-footer__language-switcher .language-switcher__btn:focus-visible {
+  outline: 2px solid rgb(26 26 26 / 0.35);
+  outline-offset: 3px;
 }
 
 /* Intro: CodePen benzeri satır mask + scaleX reveal (SplitText yok) */
@@ -1008,6 +1223,230 @@ body.mega-menu-open {
   align-items: stretch;
 }
 
+/* Kart / widget rayları — swiper altında ortalı; üstten 30px boşluk (snippet DOM’da üstte, order ile alta alınır) */
+.prava-swiper-widget {
+  --prava-widget-accent: #e86c6c;
+  --prava-widget-pill-bg: #ffffff;
+  --prava-widget-track: #ffffff;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.prava-swiper-widget > .swiper {
+  order: 1;
+  width: 100%;
+}
+
+.prava-swiper-widget__controls {
+  order: 2;
+  position: relative;
+  z-index: 8;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.875rem;
+  margin-top: 30px;
+  width: 100%;
+  max-width: 100%;
+  padding-left: max(0.125rem, env(safe-area-inset-left));
+  padding-right: max(0.125rem, env(safe-area-inset-right));
+  box-sizing: border-box;
+}
+
+.prava-swiper-widget--locked .prava-swiper-widget__controls {
+  display: none;
+}
+
+.prava-swiper-widget__pill {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 0.125rem;
+  padding: 0.25rem 0.35rem 0.25rem 0.5rem;
+  background: var(--prava-widget-pill-bg);
+  border-radius: 9999px;
+  border: 1px solid #e5e5e5;
+}
+
+.prava-swiper-widget__btn {
+  position: static;
+  transform: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .prava-swiper-widget__btn {
+    transition: none;
+  }
+}
+
+.prava-swiper-widget__btn--prev:focus-visible {
+  outline: 2px solid #171717;
+  outline-offset: 2px;
+}
+
+.prava-swiper-widget__btn--next:focus-visible {
+  outline: 2px solid var(--prava-widget-accent);
+  outline-offset: 2px;
+}
+
+.prava-swiper-widget__btn--prev {
+  width: 2.25rem;
+  height: 2.25rem;
+  border: none;
+  border-radius: 9999px;
+  background: transparent;
+  color: #2a2a2a;
+  box-shadow: none;
+}
+
+.prava-swiper-widget__btn--next {
+  width: 2.5rem;
+  height: 2.5rem;
+  border: none;
+  border-radius: 9999px;
+  background: transparent;
+  color: #2a2a2a;
+  box-shadow: none;
+}
+
+.prava-swiper-widget__btn:hover {
+  background: var(--prava-widget-accent);
+  color: #fff;
+}
+
+.prava-swiper-widget__btn--next:hover:not(.swiper-button-disabled) {
+  filter: brightness(1.06);
+}
+
+.prava-swiper-widget__btn.swiper-button-disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.prava-swiper-widget__chevron--flip {
+  transform: scaleX(-1);
+}
+
+.prava-swiper-widget__progress-track {
+  flex: 0 1 auto;
+  width: min(11rem, 36vw);
+  min-width: 4rem;
+  max-width: 4rem;
+  height: 2px;
+  align-self: center;
+}
+
+.prava-swiper-widget__pagination.swiper-pagination-progressbar {
+  position: relative;
+  top: auto;
+  right: auto;
+  bottom: auto;
+  left: auto;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  border-radius: 9999px;
+  background: var(--prava-widget-track);
+}
+
+.prava-swiper-widget__pagination .swiper-pagination-progressbar-fill {
+  border-radius: 9999px;
+  background: var(--prava-widget-accent);
+}
+
+@media (max-width: 519px) {
+  .prava-swiper-widget__controls {
+    gap: 0.625rem;
+    margin-top: 30px;
+  }
+
+  .prava-swiper-widget__progress-track {
+    min-width: 3rem;
+    max-width: 6.5rem;
+  }
+
+  .prava-swiper-widget__btn--next {
+    width: 2.375rem;
+    height: 2.375rem;
+  }
+
+  .prava-swiper-widget__chevron {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+/* PDP — Sepete ekle: hover’da yeşil + başlıklarla aynı harf harf yükseliş (main.js harf bölümü) */
+.prava-pdp-atc-btn {
+  background-color: #262626;
+}
+
+.prava-pdp-atc-btn:not(:disabled):hover {
+  background-color: #059669;
+}
+
+.prava-pdp-atc-btn:not(:disabled):active {
+  background-color: #047857;
+}
+
+.prava-pdp-atc-btn__label {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* Başlık harf maskesi — buton ölçüsüne sıkı */
+.prava-pdp-atc-btn .heading-letter-wrap {
+  padding-top: 0.05em;
+  padding-bottom: 0.12em;
+  margin-top: -0.05em;
+  margin-bottom: -0.12em;
+}
+
+.prava-pdp-atc-btn .heading-letter {
+  will-change: transform, opacity;
+}
+
+.prava-pdp-atc-btn:not(:disabled):hover .heading-letter {
+  animation: prava-pdp-atc-letter-rise 0.65s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  animation-delay: calc(var(--prava-letter-i, 0) * 0.018s);
+}
+
+@keyframes prava-pdp-atc-letter-rise {
+  from {
+    transform: translate3d(0, 95%, 0);
+    opacity: 0;
+  }
+
+  to {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .prava-pdp-atc-btn:not(:disabled):hover .heading-letter {
+    animation: none;
+  }
+}
+
+/* PDP — breadcrumb alt çizgisi yok (diğer şablonlar snippets/breadcrumbs varsayılanını kullanır) */
+.prava-pdp nav.breadcrumbs ol {
+  border-bottom-width: 0;
+  padding-bottom: 0;
+}
+
 /* PDP ana galeri — mobil: Swiper (slide genişliği CSS); md+: grid, transform kapalı */
 @media (max-width: 767px) {
   /* slidesPerView: auto — genişlik tamamen CSS (Swiper inline width üzerine) */
@@ -1015,6 +1454,10 @@ body.mega-menu-open {
     width: 100% !important;
     max-width: 100%;
     box-sizing: border-box;
+  }
+
+  .prava-blog-rail__swiper .swiper-slide {
+    width: 300px;
   }
 
   .mega-menu__col--list {
@@ -1074,10 +1517,261 @@ body.mega-menu-open {
   }
 }
 
-.prava-pdp__gallery-pagination.swiper-pagination-bullets .swiper-pagination-bullet {
-  cursor: pointer;
-  background: rgb(38 38 38 / 0.35);
+/* PDP galeri — mobil: pagination load bar (Swiper type: progressbar) */
+@media (max-width: 767px) {
+  .prava-pdp__gallery-pagination.swiper-pagination-progressbar {
+    position: relative !important;
+    top: auto !important;
+    bottom: auto !important;
+    left: 0 !important;
+    width: 100%;
+    height: 1px;
+    margin-top: 0px;
+    background: rgb(38 38 38 / 0.12);
+    border-radius: 9999px;
+    overflow: hidden;
+  }
+
+  .prava-pdp__gallery-pagination.swiper-pagination-progressbar .swiper-pagination-progressbar-fill {
+    background: rgb(23 23 23);
+    border-radius: 9999px;
+  }
+}
+
+/* PDP — galeri kutusu (modal tetikleyici) */
+.prava-pdp__gallery-tile {
+  isolation: isolate;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* PDP — tam ekran galeri modalı (product-detail.js) */
+.prava-pdp-gallery-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10060;
+  display: flex;
+  flex-direction: column;
+  background: rgb(255 255 255);
+  color: rgb(23 23 23);
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 0.3s ease,
+    visibility 0.3s ease;
+}
+
+.prava-pdp-gallery-modal.prava-pdp-gallery-modal--open {
+  visibility: visible;
   opacity: 1;
+  pointer-events: auto;
+}
+
+.prava-pdp-gallery-modal__top {
+  position: absolute;
+  inset: 0 0 auto 0;
+  z-index: 3;
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.55rem 0.75rem;
+  background: linear-gradient(to bottom, rgb(255 255 255 / 0.92) 0%, rgb(255 255 255 / 0) 100%);
+  pointer-events: none;
+}
+
+.prava-pdp-gallery-modal__top > * {
+  pointer-events: auto;
+}
+
+.prava-pdp-gallery-modal__title {
+  margin: 0;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgb(23 23 23 / 0.85);
+}
+
+.prava-pdp-gallery-modal__counter {
+  margin: 0;
+  min-width: 3.5rem;
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+  color: rgb(23 23 23 / 0.55);
+  text-align: center;
+}
+
+.prava-pdp-gallery-modal__close {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  margin: 0;
+  border: none;
+  border-radius: 9999px;
+  color: rgb(23 23 23);
+  background: rgb(23 23 23 / 0.06);
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.prava-pdp-gallery-modal__close:hover {
+  background: rgb(23 23 23 / 0.12);
+}
+
+.prava-pdp-gallery-modal__close:focus-visible {
+  outline: 2px solid rgb(23 23 23 / 0.45);
+  outline-offset: 2px;
+}
+
+.prava-pdp-gallery-modal__stage {
+  position: relative;
+  display: flex;
+  flex: 1 1 auto;
+  min-height: 0;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  touch-action: pan-y;
+}
+
+.prava-pdp-gallery-modal__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.prava-pdp-gallery-modal__nav {
+  position: absolute;
+  top: 50%;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+  margin: 0;
+  border: none;
+  border-radius: 9999px;
+  color: rgb(23 23 23);
+  background: rgb(255 255 255 / 0.92);
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 0.06),
+    0 6px 18px rgb(0 0 0 / 0.08);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  cursor: pointer;
+  transform: translateY(-50%);
+  transition:
+    background 0.2s ease,
+    box-shadow 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.prava-pdp-gallery-modal__nav:hover {
+  background: rgb(255 255 255);
+  box-shadow:
+    0 2px 4px rgb(0 0 0 / 0.08),
+    0 10px 24px rgb(0 0 0 / 0.12);
+}
+
+.prava-pdp-gallery-modal__nav:focus-visible {
+  outline: 2px solid rgb(23 23 23 / 0.45);
+  outline-offset: 2px;
+}
+
+.prava-pdp-gallery-modal__nav--prev {
+  left: clamp(0.35rem, 2vw, 1rem);
+}
+
+.prava-pdp-gallery-modal__nav--next {
+  right: clamp(0.35rem, 2vw, 1rem);
+}
+
+.prava-pdp-gallery-modal__nav[hidden] {
+  display: none !important;
+}
+
+.prava-pdp-gallery-modal__thumbs {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.55rem 0.75rem 0.65rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  background: linear-gradient(to top, rgb(255 255 255 / 0.96) 0%, rgb(255 255 255 / 0) 100%);
+  scrollbar-width: thin;
+  scrollbar-color: rgb(23 23 23 / 0.22) transparent;
+}
+
+.prava-pdp-gallery-modal__thumbs::-webkit-scrollbar {
+  height: 4px;
+}
+
+.prava-pdp-gallery-modal__thumbs::-webkit-scrollbar-thumb {
+  border-radius: 9999px;
+  background: rgb(23 23 23 / 0.22);
+}
+
+.prava-pdp-gallery-modal__thumb {
+  position: relative;
+  flex: 0 0 auto;
+  width: 3.5rem;
+  height: 3.5rem;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  border: 2px solid transparent;
+  border-radius: 0.25rem;
+  background: rgb(245 245 245);
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.prava-pdp-gallery-modal__thumb:hover {
+  opacity: 0.92;
+}
+
+.prava-pdp-gallery-modal__thumb.is-active {
+  border-color: rgb(23 23 23 / 0.85);
+}
+
+.prava-pdp-gallery-modal__thumb:focus-visible {
+  outline: 2px solid rgb(23 23 23 / 0.45);
+  outline-offset: 2px;
+}
+
+.prava-pdp-gallery-modal__thumb img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+html.prava-pdp-gallery-modal-open {
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .prava-pdp-gallery-modal {
+    transition-duration: 0.01ms;
+  }
 }
 
 /* PDP 360° görsel (Cloudimage 360 View) */
@@ -1096,10 +1790,6 @@ body.mega-menu-open {
   display: block;
   max-width: 100%;
   height: auto;
-}
-
-.prava-pdp__gallery-pagination.swiper-pagination-bullets .swiper-pagination-bullet-active {
-  background: rgb(23 23 23);
 }
 
 .prava-blog-card p.line-clamp-3 {

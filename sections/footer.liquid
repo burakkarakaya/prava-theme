@@ -7,6 +7,16 @@
 %}
 {% assign footer_menu = linklists['footer'] %}
 {% assign footer_bottom_menu = linklists['footer-bottom-menu'] %}
+{% liquid
+  assign footer_show_language = false
+  if localization.available_languages.size > 1
+    assign footer_show_language = true
+  endif
+  assign footer_show_bottom_nav = false
+  if footer_bottom_menu.links.size > 0
+    assign footer_show_bottom_nav = true
+  endif
+%}
 <footer
   class="site-footer mt-auto bg-product-color text-[#333333] z-[50]"
   role="contentinfo"
@@ -14,7 +24,7 @@
   style="--footer-pad-x: 40px;"
 >
   {% if settings.footer_watermark_image != blank %}
-    <div class="site-footer__watermark" aria-hidden="true">
+    <div class="lg:px-16 mx-auto site-footer__watermark" aria-hidden="true">
       <img
         src="{{ settings.footer_watermark_image | image_url: width: 2400 }}"
         alt=""
@@ -87,7 +97,7 @@
             {% if link.links.size > 0 %}
               <details
                 id="site-footer-nav-{{ section.id }}-{{ forloop.index }}"
-                class="site-footer__nav-details group border-b border-[#333333]/18 lg:border-0"
+                class="site-footer__nav-details group border-b border-[#c8c4a8] lg:border-0"
               >
                 <summary
                   class="flex cursor-pointer list-none items-center justify-between gap-3 py-3 text-base lg:text-lg font-bold uppercase text-[#333333] outline-none marker:hidden [&::-webkit-details-marker]:hidden focus-visible:ring-2 focus-visible:ring-[#333333]/35 focus-visible:ring-offset-2 focus-visible:ring-offset-[#F5F5F0] lg:pointer-events-none lg:cursor-default lg:py-0 lg:focus-visible:ring-0"
@@ -108,7 +118,7 @@
                     <path d="M6 9l6 6 6-6" />
                   </svg>
                 </summary>
-                <ul class="mt-0 space-y-3 border-t border-[#333333]/12 pb-4 pt-4 text-base font-normal text-[#333333] lg:mt-6 lg:border-t-0 lg:pb-0 lg:pt-0">
+                <ul class="mt-0 space-y-3 border-t border-[#c8c4a8] pb-4 pt-4 text-base font-normal text-[#333333] lg:mt-6 lg:border-t-0 lg:pb-0 lg:pt-0">
                   {% for child_link in link.links %}
                     <li>
                       <a
@@ -174,22 +184,34 @@
 
     <div class="site-footer__legal lg:mt-4 flex flex-col gap-6 lg:border-t border-[#c8c4a8] pt-8 lg:mt-56 md:flex-row md:items-center md:justify-between md:gap-8 text-center lg:text-left">
       <p class="text-xs text-[#333333]/85 md:text-sm"><b>{{ 'footer.copyright' | t: year: footer_year, shop_name: shop.name }}</b></p>
-      {%- if footer_bottom_menu.links.size > 0 -%}
-        <nav aria-label="{{ footer_bottom_menu.title | escape }}">
-          <ul class="flex flex-wrap items-center justify-center lg:justify-end gap-x-6 gap-y-2 text-xs md:justify-end md:text-sm">
-            {% for link in footer_bottom_menu.links %}
-              <li>
-                <a
-                  href="{{ link.url }}"
-                  class="text-[#333333] decoration-[#333333]/35 underline-offset-4 transition-opacity hover:opacity-70{% if link.active %} font-medium{% endif %}"
-                  {% if link.current %}aria-current="page"{% endif %}
-                >
-                  {{- link.title | escape -}}
-                </a>
-              </li>
-            {% endfor %}
-          </ul>
-        </nav>
+      {%- if footer_show_language or footer_show_bottom_nav -%}
+        <div class="flex flex-col items-center gap-4 md:flex-row md:flex-wrap md:items-center md:justify-center lg:justify-end md:gap-x-8 md:gap-y-3">
+          {% if footer_show_language %}
+            <div
+              class="site-footer__language-switcher"
+              aria-label="{{ 'footer.language_switcher_aria' | t }}"
+            >
+              {% render 'header-language-switcher' %}
+            </div>
+          {% endif %}
+          {%- if footer_show_bottom_nav -%}
+            <nav aria-label="{{ footer_bottom_menu.title | escape }}">
+              <ul class="flex flex-wrap items-center justify-center lg:justify-end gap-x-6 gap-y-2 text-xs md:justify-end md:text-sm">
+                {% for link in footer_bottom_menu.links %}
+                  <li>
+                    <a
+                      href="{{ link.url }}"
+                      class="text-[#333333] decoration-[#333333]/35 underline-offset-4 transition-opacity hover:opacity-70{% if link.active %} font-medium{% endif %}"
+                      {% if link.current %}aria-current="page"{% endif %}
+                    >
+                      {{- link.title | escape -}}
+                    </a>
+                  </li>
+                {% endfor %}
+              </ul>
+            </nav>
+          {%- endif -%}
+        </div>
       {%- endif -%}
     </div>
   </div>

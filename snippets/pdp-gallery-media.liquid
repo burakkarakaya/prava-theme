@@ -1,6 +1,7 @@
 {% comment %}
   Tek bir ürün medyası — PDP grid ve mobil Swiper içinde ortak kullanım.
   Parametreler: media, product, loading (eager | lazy)
+  İsteğe bağlı (yalnızca image): gallery_modal_index, gallery_image_total — tam ekran galeri modalı (product-detail.js)
 {% endcomment %}
 {% liquid
   assign alt = media.alt | default: product.title
@@ -8,15 +9,35 @@
 %}
 {% case media.media_type %}
   {% when 'image' %}
-    <img
-      src="{{ media | image_url: width: 1400 }}"
-      alt="{{ alt | escape }}"
-      width="{{ media.width | default: 1200 }}"
-      height="{{ media.height | default: 1200 }}"
-      class="aspect-square w-full object-cover"
-      loading="{{ load }}"
-      decoding="async"
-    >
+    {% liquid
+      assign modal_idx = gallery_modal_index | default: 0
+      assign modal_total = gallery_image_total | default: 1
+      assign idx_one = modal_idx | plus: 1
+      assign large_src = media | image_url: width: 3840
+      assign thumb_src = media | image_url: width: 200
+      assign open_aria = 'products.gallery_modal_open_aria' | t: index: idx_one, total: modal_total
+    %}
+    <div class="prava-pdp__gallery-tile relative aspect-square w-full overflow-hidden">
+      <img
+        src="{{ media | image_url: width: 1400 }}"
+        alt="{{ alt | escape }}"
+        width="{{ media.width | default: 1200 }}"
+        height="{{ media.height | default: 1200 }}"
+        class="pointer-events-none h-full w-full select-none object-cover"
+        loading="{{ load }}"
+        decoding="async"
+        draggable="false"
+      >
+      <button
+        type="button"
+        class="prava-pdp__gallery-modal-open absolute inset-0 z-[1] cursor-zoom-in border-0 bg-transparent p-0 text-left transition-opacity duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-900"
+        data-prava-pdp-gallery-modal-open
+        data-prava-modal-src="{{ large_src | escape }}"
+        data-prava-modal-thumb="{{ thumb_src | escape }}"
+        data-prava-modal-alt="{{ alt | escape }}"
+        aria-label="{{ open_aria | escape }}"
+      ></button>
+    </div>
   {% when 'video' %}
     {{
       media
