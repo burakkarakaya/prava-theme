@@ -64,14 +64,54 @@
     "landing_history": {
       "type": "landing-history",
       "blocks": {
-        "gallery_1": { "type": "gallery_image", "settings": {} },
-        "gallery_2": { "type": "gallery_image", "settings": {} },
-        "gallery_3": { "type": "gallery_image", "settings": {} },
-        "gallery_4": { "type": "gallery_image", "settings": {} },
-        "gallery_5": { "type": "gallery_image", "settings": {} },
-        "gallery_6": { "type": "gallery_image", "settings": {} },
-        "gallery_7": { "type": "gallery_image", "settings": {} },
-        "gallery_8": { "type": "gallery_image", "settings": {} }
+        "gallery_1": {
+          "type": "gallery_image",
+          "settings": {
+            "image": "shopify://shop_images/history-4.jpg"
+          }
+        },
+        "gallery_2": {
+          "type": "gallery_image",
+          "settings": {
+            "image": "shopify://shop_images/history-1.jpg"
+          }
+        },
+        "gallery_3": {
+          "type": "gallery_image",
+          "settings": {
+            "image": "shopify://shop_images/history-6.png"
+          }
+        },
+        "gallery_4": {
+          "type": "gallery_image",
+          "settings": {
+            "image": "shopify://shop_images/history-8.jpg"
+          }
+        },
+        "gallery_5": {
+          "type": "gallery_image",
+          "settings": {
+            "image": "shopify://shop_images/history-2.jpg"
+          }
+        },
+        "gallery_6": {
+          "type": "gallery_image",
+          "settings": {
+            "image": "shopify://shop_images/history-5.jpg"
+          }
+        },
+        "gallery_7": {
+          "type": "gallery_image",
+          "settings": {
+            "image": "shopify://shop_images/history-3.jpg"
+          }
+        },
+        "gallery_8": {
+          "type": "gallery_image",
+          "settings": {
+            "image": "shopify://shop_images/history-7.jpg"
+          }
+        }
       },
       "block_order": [
         "gallery_1",
@@ -84,12 +124,15 @@
         "gallery_8"
       ],
       "settings": {
-        "background_color": "#ffffff",
+        "section_aria_label": "Tarihçe ve görsel deneyim",
         "eyebrow": "PRAVA’nın Hikayesine Git",
+        "eyebrow_page": "",
         "headline": "1983’ten Günümüze Prava",
         "selection_tag": "Choose your style",
         "selection_heading": "What will you create?",
         "selection_text": "Pick a visual style, then describe your vision",
+        "picker_aria_label": "Görsel stil seçimi",
+        "prompt_label": "Görsel açıklaması",
         "prompt_placeholder": "Describe what you want to create… e.g. 'A misty mountain range at dawn with warm golden light'",
         "button_label": "Generate Images →"
       }

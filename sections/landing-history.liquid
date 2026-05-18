@@ -3,8 +3,6 @@
   GSAP / ScrollTrigger tema layout'unda yüklü; bu bölüm landing-hero hemen altına gelir.
 {% endcomment %}
 {%- liquid
-  assign lh_bg = section.settings.background_color | default: '#ffffff'
-
   comment
     Varsayılan görseller (JS dışı) — paneldeki «Scroll kart görseli» boşsa kullanılır.
     Panelden yükleme yapılırsa o slotta Shopify CDN URL'si geçerli olur.
@@ -50,10 +48,9 @@
 
 <section
   id="landing-history-{{ section.id }}"
-  class="landing-history"
+  class="landing-history bg-custom-color text-neutral-900"
   data-landing-history
   data-gallery-images='{{ gallery_json }}'
-  style="--lh-bg: {{ lh_bg }};"
   aria-label="{{ section.settings.section_aria_label | default: 'Tarihçe ve görsel deneyim' | escape }}"
 >
   <div class="landing-history__scroll" data-landing-history-scroll>
@@ -106,12 +103,6 @@
       "id": "section_aria_label",
       "label": "Erişilebilirlik etiketi",
       "default": "Tarihçe ve görsel deneyim"
-    },
-    {
-      "type": "color",
-      "id": "background_color",
-      "label": "Arka plan rengi",
-      "default": "#ffffff"
     },
     {
       "type": "header",

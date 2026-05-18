@@ -7,16 +7,45 @@
   var MOBILE_MAX_VW = 767;
   var RESIZE_WAIT_MS = 200;
 
-  var CARD_CONFIGS = [
+  /** Masaüstü kart yerleşimi (768px üstü). */
+  var CARD_CONFIGS_DESKTOP = [
     { xP: 0.14, yP: 0.18, z: -280, w: 240, ar: 1.5, rot: 2.5, op: 0.55 },
-    { xP: 0.82, yP: 0.16, z: -60, w: 290, ar: 0.68, rot: -2.1, op: 0.72 },
-    { xP: 0.12, yP: 0.5, z: 240, w: 350, ar: 1.52, rot: -1.8, op: 1.0, hideOnMobile: true },
-    { xP: 0.86, yP: 0.48, z: 260, w: 300, ar: 0.67, rot: 2.2, op: 1.0, hideOnMobile: true },
-    { xP: 0.16, yP: 0.76, z: 30, w: 290, ar: 1.45, rot: 1.4, op: 0.78 },
-    { xP: 0.8, yP: 0.74, z: -240, w: 220, ar: 1.38, rot: -3.0, op: 0.5 },
-    { xP: 0.32, yP: 0.14, z: -80, w: 270, ar: 1.6, rot: -1.2, op: 0.7 },
-    { xP: 0.66, yP: 0.8, z: 180, w: 320, ar: 1.5, rot: 1.9, op: 0.9 },
+    { xP: 0.75, yP: 0.16, z: -60, w: 290, ar: 0.6, rot: -2.1, op: 0.72 },
+    { xP: 0.18, yP: 0.5, z: 240, w: 350, ar: 1.52, rot: -1.8, op: 1.0 },
+    { xP: 0.8, yP: 0.48, z: 260, w: 300, ar: 0.67, rot: 2.2, op: 1.0 },
+    { xP: 0.16, yP: 0.73, z: 30, w: 290, ar: 1.45, rot: 1.4, op: 0.78 },
+    { xP: 0.6, yP: 0.8, z: -240, w: 220, ar: 1.38, rot: -3.0, op: 0.6 },
+    { xP: 0.32, yP: 0.14, z: -80, w: 300, ar: 1.6, rot: -1.2, op: 0.8 },
+    { xP: 0.66, yP: 0.8, z: 180, w: 320, ar: 1.8, rot: 1.9, op: 0.8 },
   ];
+
+  /**
+   * Mobil kart yerleşimi (767px ve altı) — kart slot sırası masaüstü ile aynıdır.
+   * hide: true → kart mobilde gösterilmez (görsel indeksi korunur).
+   */
+  var CARD_CONFIGS_MOBILE = [
+    { xP: 0.2, yP: 0.28, z: -160, w: 380, ar: 1.5, rot: 2.2, op: 0.58 },
+    { xP: 0.82, yP: 0.20, z: -40, w: 370, ar: 0.75, rot: -2.0, op: 0.75 },
+    { hide: true },
+    { hide: true },
+    { xP: 0.22, yP: 0.74, z: 20, w: 430, ar: 1.45, rot: 4.2, op: 0.8 },
+    { xP: 0.82, yP: 0.72, z: -140, w: 340, ar: 1.38, rot: -6.6, op: 0.62 },
+    { xP: 0.3, yP: 0.15, z: -50, w: 400, ar: 1.55, rot: -8.0, op: 0.82 },
+    { xP: 0.7, yP: 0.80, z: 120, w: 500, ar: 1.75, rot: 1.6, op: 1.0 },
+    
+
+
+
+
+  ];
+
+  function getCardConfigs(mobile) {
+    return mobile ? CARD_CONFIGS_MOBILE : CARD_CONFIGS_DESKTOP;
+  }
+
+  function shouldHideCard(cfg) {
+    return !!cfg.hide;
+  }
 
   var gsapRegistered = false;
   var finePointer =
@@ -192,8 +221,8 @@
       inst.sortedEnter = [];
       inst.sortedExit = [];
 
-      CARD_CONFIGS.forEach(function (cfg, i) {
-        if (mobile && cfg.hideOnMobile) return;
+      getCardConfigs(mobile).forEach(function (cfg, i) {
+        if (shouldHideCard(cfg)) return;
 
         var w = Math.round(cfg.w * scale);
         var h = Math.round(w / cfg.ar);

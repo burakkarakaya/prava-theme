@@ -4,9 +4,15 @@
   Metaobject: navigation_item — örnek alanlar:
   menu_uri, gorsel, icon_name, aciklama, discover_label, discover_url, cta_label, cta_url
 
+  Sağ sütun: kategori hover’ında görsel değişir (data-gorsel). Görsel yoksa Unsplash placeholder.
+
   Parametreler: main_menu, nav_items
 {% endcomment %}
 {% assign mega_cta_default = 'header.mega_default_cta' | t %}
+{% assign mega_menu_visual_video = 'https://assets.mixkit.co/videos/14471/14471-720.mp4' %}
+{% assign mega_menu_visual_video_poster = 'https://assets.mixkit.co/videos/14471/14471-thumb-720-0.jpg' %}
+{% assign mega_placeholder_imgs = 'https://images.unsplash.com/photo-1483985988355-763728c55c27?w=1040&q=80,https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?w=1040&q=80,https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1040&q=80,https://images.unsplash.com/photo-1515886657613-9f3525f0ccfe?w=1040&q=80,https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=1040&q=80,https://images.unsplash.com/photo-1539109136882-3a94eabd4396?w=1040&q=80' | split: ',' %}
+{% assign mega_ph_count = mega_placeholder_imgs.size %}
 
 {% if main_menu.links.size > 0 %}
   <div class="mega-menu__tabs-wrap">
@@ -45,33 +51,52 @@
       {% endfor %}
 
       {% liquid
+        assign panel_index = forloop.index0
+        assign panel_ph_index = panel_index | modulo: mega_ph_count
+        assign panel_placeholder = mega_placeholder_imgs[panel_ph_index]
+
         if pmeta
           assign fd = pmeta.discover_label.value | default: link.title
           assign fh = pmeta.discover_url.value | default: link.url
           assign fc = pmeta.cta_label.value | default: mega_cta_default
           assign fch = pmeta.cta_url.value | default: '#'
-          assign panel_visual = pmeta.gorsel.value
         else
           assign fd = link.title
           assign fh = link.url
           assign fc = mega_cta_default
           assign fch = '#'
-          assign panel_visual = blank
         endif
-        if panel_visual == blank and settings.mega_menu_featured_image != blank
-          assign panel_visual = settings.mega_menu_featured_image
+
+        assign panel_default_src = panel_placeholder
+        if pmeta and pmeta.gorsel.value != blank
+          assign panel_default_src = pmeta.gorsel.value | image_url: width: 1040
+        elsif settings.mega_menu_featured_image != blank
+          assign panel_default_src = settings.mega_menu_featured_image | image_url: width: 1040
+        endif
+
+        assign panel_visual_src = panel_default_src
+        assign panel_visual_alt = link.title
+        assign panel_use_video = false
+        if panel_ph_index == 1
+          unless pmeta and pmeta.gorsel.value != blank
+            unless settings.mega_menu_featured_image != blank
+              assign panel_use_video = true
+              assign panel_default_src = mega_menu_visual_video_poster
+              assign panel_visual_src = mega_menu_visual_video_poster
+            endunless
+          endunless
         endif
       %}
 
       <div
         class="mega-menu__panel"
         role="tabpanel"
-        id="mega-panel-{{ forloop.index0 }}"
+        id="mega-panel-{{ panel_index }}"
         {% unless forloop.first %}
           hidden
         {% endunless %}
-        aria-labelledby="mega-tab-{{ forloop.index0 }}"
-        data-mega-panel="{{ forloop.index0 }}"
+        aria-labelledby="mega-tab-{{ panel_index }}"
+        data-mega-panel="{{ panel_index }}"
         data-footer-discover="{{ fd | escape }}"
         data-footer-discover-href="{{ fh | escape }}"
         data-footer-cta="{{ fc | escape }}"
@@ -91,17 +116,20 @@
                   {% endfor %}
 
                   {% liquid
-                    assign child_gorsel = blank
+                    assign child_ph_index = forloop.index0 | modulo: mega_ph_count
+                    assign child_gorsel = mega_placeholder_imgs[child_ph_index]
                     if child_meta and child_meta.gorsel.value != blank
                       assign child_gorsel = child_meta.gorsel.value | image_url: width: 1040
                     endif
+                    if child.active or forloop.first
+                      unless panel_use_video
+                        assign panel_visual_src = child_gorsel
+                        assign panel_visual_alt = child.title
+                      endunless
+                    endif
                   %}
 
-                  <li
-                    {% if child_gorsel != blank %}
-                      data-gorsel="{{ child_gorsel | escape }}"
-                    {% endif %}
-                  >
+                  <li data-gorsel="{{ child_gorsel | escape }}">
                     <a
                       href="{{ child.url }}"
                       class="mega-menu__subitem{% if forloop.first or child.active %} is-active{% endif %}"
@@ -133,7 +161,7 @@
               </ul>
             {% else %}
               <ul class="mega-menu__sublist">
-                <li>
+                <li data-gorsel="{{ panel_default_src | escape }}">
                   <a href="{{ link.url }}" class="mega-menu__subitem is-active">
                     <span class="mega-menu__subtext">
                       <span class="mega-menu__subtitle">{{ link.title | escape }}</span>
@@ -147,17 +175,38 @@
             {% endif %}
           </div>
           <div class="mega-menu__col mega-menu__col--visual hidden lg:block">
-            <div class="mega-menu__visual">
-              {% if panel_visual != blank %}
-                <img
-                  src="{{ panel_visual | image_url: width: 1040 }}"
+            <div
+              class="mega-menu__visual"
+              data-default-src="{{ panel_default_src | escape }}"
+              {% if panel_use_video %}
+                data-default-video="{{ mega_menu_visual_video | escape }}"
+              {% endif %}
+            >
+              {% if panel_use_video %}
+                <video
+                  class="mega-menu__visual-video"
+                  data-mega-visual-video
+                  src="{{ mega_menu_visual_video | escape }}"
+                  poster="{{ mega_menu_visual_video_poster | escape }}"
                   width="520"
                   height="640"
-                  alt="{{ link.title | escape }}"
-                  class="mega-menu__visual-img"
-                  loading="lazy"
-                >
+                  muted
+                  loop
+                  playsinline
+                  autoplay
+                  aria-hidden="true"
+                ></video>
               {% endif %}
+              <img
+                src="{{ panel_visual_src | escape }}"
+                width="520"
+                height="640"
+                alt="{{ panel_visual_alt | escape }}"
+                class="mega-menu__visual-img{% if panel_use_video %} mega-menu__visual-img--hidden{% endif %}"
+                data-mega-visual-img
+                loading="lazy"
+                decoding="async"
+              >
             </div>
           </div>
         </div>

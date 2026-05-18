@@ -6,7 +6,7 @@
   assign th = transparent_header | default: false
 %}
 
-<span class="hidden font-light lg:block{% if th %} text-white{% else %} text-neutral-900{% endif %}">{{ 'header.cart' | t }}</span>
+<span class="hidden font-light lg:block{% if th %} text-white lg:group-[.is-mega-open]/header:text-neutral-900{% else %} text-neutral-900{% endif %}">{{ 'header.cart' | t }}</span>
 <span class="sr-only" data-prava-cart-count-aria>
   {%- if cart.item_count > 0 -%}
     {{- 'header.cart_count' | t: count: cart.item_count -}}
@@ -20,7 +20,7 @@
     width="32"
     height="32"
     alt=""
-    class="prava-cart-bubble__icon{% unless th %} brightness-0{% endunless %}"
+    class="prava-cart-bubble__icon{% if th %} lg:group-[.is-mega-open]/header:brightness-0{% else %} brightness-0{% endif %}"
     aria-hidden="true"
   >
   {%- if cart.item_count > 0 -%}

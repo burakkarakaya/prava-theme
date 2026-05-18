@@ -20,44 +20,54 @@
 
   <header
     id="site-header"
-    class="prava-site-header z-[100] flex h-[64px] lg:h-[88px] shrink-0 items-center justify-between px-4 lg:px-10 transition-[background-color,box-shadow] duration-200{% if header_is_transparent %} fixed left-0 right-0 top-0 bg-transparent{% else %} sticky top-0 w-full bg-custom-color{% endif %}{% if has_list_cover_image %} list-cover-image{% endif %}"
+    class="prava-site-header group/header z-[100] flex h-[64px] lg:h-[88px] shrink-0 items-center justify-between px-4 lg:px-10 transition-[background-color,box-shadow] duration-200{% if header_is_transparent %} fixed left-0 right-0 top-0 bg-transparent lg:group-[.is-mega-open]/header:bg-white{% else %} sticky top-0 w-full bg-custom-color lg:group-[.is-mega-open]/header:bg-white{% endif %}{% if has_list_cover_image %} list-cover-image{% endif %}"
     style="--header-pad-x: 40px;"
     role="banner"
     data-header-theme="{% if header_is_transparent %}transparent{% else %}solid{% endif %}"
   >
     <button
-      type="button"
-      id="btn-menu"
-      class="flex items-center gap-3 text-base font-semibold tracking-wide transition-opacity hover:opacity-80{% if header_is_transparent %} text-white{% else %} text-neutral-900{% endif %}"
-      aria-expanded="false"
-      aria-controls="mega-menu"
-      aria-haspopup="dialog"
-      aria-label="{{ 'header.menu_open' | t }}"
-    >
-      <img
-        src="{{ 'icons/menu.svg' | asset_url }}"
-        width="32"
-        height="32"
-        alt=""
-        class="shrink-0{% unless header_is_transparent %} brightness-0{% endunless %}"
-        aria-hidden="true"
+        type="button"
+        id="btn-menu"
+        class="btn-menu flex items-center text-base font-semibold tracking-wide outline-none transition-opacity hover:opacity-80{% if header_is_transparent %} text-white lg:group-[.is-mega-open]/header:text-neutral-900{% else %} text-neutral-900{% endif %}"
+        aria-expanded="false"
+        aria-controls="mega-menu"
+        aria-haspopup="dialog"
+        aria-label="{{ 'header.menu_open' | t }}"
+        data-label-open="{{ 'header.menu_open' | t | escape }}"
+        data-label-close="{{ 'header.mega_menu_close' | t | escape }}"
       >
-      <span class="hidden lg:block" aria-hidden="true">{{ 'header.menu_visible' | t }}</span>
-    </button>
-    <a href="{{ routes.root_url }}" class="absolute left-40 lg:left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" aria-label="{{ 'header.home' | t: shop_name: shop.name }}">
+        <span class="btn-menu__wrap">
+          <span class="btn-menu__panel btn-menu__panel--menu">
+            <span class="btn-menu__icon btn-menu__icon--menu" aria-hidden="true">
+              <span class="btn-menu__line btn-menu__line--top"></span>
+              <span class="btn-menu__line btn-menu__line--mid"></span>
+              <span class="btn-menu__line btn-menu__line--bot"></span>
+            </span>
+            <span class="btn-menu__text hidden font-light lg:inline">{{ 'header.menu_visible' | t }}</span>
+          </span>
+          <span class="btn-menu__panel btn-menu__panel--close" aria-hidden="true">
+            <span class="btn-menu__icon btn-menu__icon--close" aria-hidden="true">
+              <span class="btn-menu__x-line"></span>
+              <span class="btn-menu__x-line"></span>
+            </span>
+            <span class="btn-menu__text hidden font-light lg:inline">{{ 'header.close_visible' | t }}</span>
+          </span>
+        </span>
+      </button>
+    <a href="{{ routes.root_url }}" class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" aria-label="{{ 'header.home' | t: shop_name: shop.name }}">
       <img
         src="{{ 'icons/prava_logo.svg' | asset_url }}"
         width="120"
         height="22"
         alt="{{ shop.name | escape }}"
-        class="h-[22px] w-auto{% unless header_is_transparent %} brightness-0{% endunless %}"
+        class="h-[22px] w-auto{% if header_is_transparent %} lg:group-[.is-mega-open]/header:brightness-0{% else %} brightness-0{% endif %}"
       >
     </a>
-    <nav class="flex items-center gap-1 text-[15px] font-semibold tracking-wide lg:gap-10{% if header_is_transparent %} text-white{% else %} text-neutral-900{% endif %}" aria-label="{{ 'header.utility_nav' | t }}">
+    <nav class="site-header__utility flex items-center gap-1 text-[15px] font-semibold tracking-wide lg:gap-10{% if header_is_transparent %} text-white lg:group-[.is-mega-open]/header:text-neutral-900{% else %} text-neutral-900{% endif %}" aria-label="{{ 'header.utility_nav' | t }}">
       <button
         type="button"
         id="mini-search-open"
-        class="inline-flex items-center gap-2 py-1 font-light transition-opacity hover:opacity-80{% if header_is_transparent %} lg:border-b border-white/40 text-white{% else %} border-b border-neutral-300 text-neutral-900{% endif %}"
+        class="inline-flex items-center gap-2 py-1 font-light transition-opacity hover:opacity-80{% if header_is_transparent %} lg:border-b border-white/40 text-white lg:group-[.is-mega-open]/header:border-neutral-300 lg:group-[.is-mega-open]/header:text-neutral-900{% else %} border-b border-neutral-300 text-neutral-900{% endif %}"
         aria-expanded="false"
         aria-controls="mini-search-dialog"
         aria-haspopup="dialog"
@@ -68,7 +78,7 @@
           width="20"
           height="19"
           alt=""
-          class="h-[19px] w-5 shrink-0 lg:h-[17px] lg:w-[18px]{% unless header_is_transparent %} brightness-0{% endunless %}"
+          class="h-[19px] w-5 shrink-0 lg:h-[17px] lg:w-[18px]{% if header_is_transparent %} lg:group-[.is-mega-open]/header:brightness-0{% else %} brightness-0{% endif %}"
           aria-hidden="true"
         >
         <span class="hidden lg:block">{{ 'header.search' | t }}</span>
@@ -86,14 +96,14 @@
           <shopify-account menu="customer-account-main-menu">
             <div
               slot="signed-out-avatar"
-              class="inline-flex items-center gap-2 py-1 text-[15px] font-light tracking-wide transition-opacity hover:opacity-80{% if header_is_transparent %} border-white/40 text-white{% else %} border-neutral-300 text-neutral-900{% endif %}"
+              class="inline-flex items-center gap-2 py-1 text-[15px] font-light tracking-wide transition-opacity hover:opacity-80{% if header_is_transparent %} border-white/40 text-white lg:group-[.is-mega-open]/header:border-neutral-300 lg:group-[.is-mega-open]/header:text-neutral-900{% else %} border-neutral-300 text-neutral-900{% endif %}"
             >
               <img
                 src="{{ 'icons/account.svg' | asset_url }}"
                 width="32"
                 height="32"
                 alt=""
-                class="h-8 w-8 shrink-0 lg:hidden{% unless header_is_transparent %} brightness-0{% endunless %}"
+                class="h-8 w-8 shrink-0 lg:hidden{% if header_is_transparent %} lg:group-[.is-mega-open]/header:brightness-0{% else %} brightness-0{% endif %}"
                 aria-hidden="true"
                 data-test-id="header_account"
               >
@@ -105,7 +115,7 @@
       <a
         href="{{ routes.cart_url }}"
         id="cart-icon-bubble"
-        class="flex items-center gap-2 font-light transition-opacity hover:opacity-80{% if header_is_transparent %} text-white{% else %} text-neutral-900{% endif %}"
+        class="flex items-center gap-2 font-light transition-opacity hover:opacity-80{% if header_is_transparent %} text-white lg:group-[.is-mega-open]/header:text-neutral-900{% else %} text-neutral-900{% endif %}"
         aria-label="{{ 'header.cart' | t }}"
       >
         {% render 'prava-cart-icon-inner', transparent_header: header_is_transparent %}
@@ -117,8 +127,8 @@
 
   <div id="mega-menu" class="mega-menu" role="dialog" aria-modal="true" aria-label="{{ 'header.mega_menu_label' | t }}" hidden>
     <div class="mega-menu__inner" style="--mega-pad-x: 40px;">
-      <div class="mega-menu__bar">
-        <button type="button" class="mega-menu__close pl-2" id="mega-menu-close" aria-label="{{ 'header.mega_menu_close' | t }}">
+      <div class="mega-menu__bar lg:hidden">
+        <button type="button" class="mega-menu__close pl-2 outline-none" id="mega-menu-close" aria-label="{{ 'header.mega_menu_close' | t }}">
           <svg class="mega-menu__close-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>
           <span class="hidden lg:block text-base font-semibold" aria-hidden="true">{{ 'header.close_visible' | t }}</span>
         </button>
@@ -126,14 +136,16 @@
           <img src="{{ 'icons/prava_logo.svg' | asset_url }}" width="120" height="22" alt="{{ shop.name | escape }}" class="h-[22px] w-auto invert lg:hidden">
         </div>
       </div>
-      {% comment %} main-menu (Gezinme) + navigation_item metaobject — snippets/mega-menu-dynamic.liquid {% endcomment %}
-      {% render 'mega-menu-dynamic', main_menu: main_menu, nav_items: nav_items %}
-      {% if main_menu.links.size > 0 %}
-        <div class="mega-menu__footer">
-          <a href="{{ main_menu.links.first.url }}" class="mega-menu__footer-link" id="mega-footer-discover">{{ main_menu.links.first.title | escape }}</a>
-          <a href="#" class="mega-menu__footer-cta" id="mega-footer-cta">{{ 'header.mega_default_cta' | t }}</a>
-        </div>
-      {% endif %}
+      <div class="mega-menu__body">
+        {% comment %} main-menu (Gezinme) + navigation_item metaobject — snippets/mega-menu-dynamic.liquid {% endcomment %}
+        {% render 'mega-menu-dynamic', main_menu: main_menu, nav_items: nav_items %}
+        {% comment %} {% if main_menu.links.size > 0 %}
+          <div class="mega-menu__footer">
+            <a href="{{ main_menu.links.first.url }}" class="mega-menu__footer-link" id="mega-footer-discover">{{ main_menu.links.first.title | escape }}</a>
+            <a href="#" class="mega-menu__footer-cta" id="mega-footer-cta">{{ 'header.mega_default_cta' | t }}</a>
+          </div>
+        {% endif %} {% endcomment %}
+      </div>
     </div>
     <button
       type="button"
