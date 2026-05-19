@@ -19,38 +19,19 @@
     { xP: 0.66, yP: 0.8, z: 180, w: 320, ar: 1.8, rot: 1.9, op: 0.8 },
   ];
 
-  /**
-   * Mobil kart yerleşimi (767px ve altı) — kart slot sırası masaüstü ile aynıdır.
-   * hide: true → kart mobilde gösterilmez (görsel indeksi korunur).
-   */
-  var CARD_CONFIGS_MOBILE = [
-    { xP: 0.2, yP: 0.28, z: -160, w: 380, ar: 1.5, rot: 2.2, op: 0.58 },
-    { xP: 0.82, yP: 0.20, z: -40, w: 370, ar: 0.75, rot: -2.0, op: 0.75 },
-    { hide: true },
-    { hide: true },
-    { xP: 0.22, yP: 0.74, z: 20, w: 430, ar: 1.45, rot: 4.2, op: 0.8 },
-    { xP: 0.82, yP: 0.72, z: -140, w: 340, ar: 1.38, rot: -6.6, op: 0.62 },
-    { xP: 0.3, yP: 0.15, z: -50, w: 400, ar: 1.55, rot: -8.0, op: 0.82 },
-    { xP: 0.7, yP: 0.80, z: 120, w: 500, ar: 1.75, rot: 1.6, op: 1.0 },
-    
-
-
-
-
-  ];
-
-  function getCardConfigs(mobile) {
-    return mobile ? CARD_CONFIGS_MOBILE : CARD_CONFIGS_DESKTOP;
-  }
-
-  function shouldHideCard(cfg) {
-    return !!cfg.hide;
+  function getCardConfigs() {
+    return CARD_CONFIGS_DESKTOP;
   }
 
   var gsapRegistered = false;
-  var finePointer =
-    typeof window.matchMedia === 'function' &&
-    window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+  /** Fare ile 3D sahne eğimi — yalnızca masaüstü ince işaretçi (mobil / dokunmatikte kapalı). */
+  function canUseMouseParallax(vw) {
+    if (isMobile(vw)) return false;
+    if (typeof window.matchMedia !== 'function') return true;
+    if (window.matchMedia('(pointer: coarse)').matches) return false;
+    return window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  }
 
   function registerGsap() {
     if (gsapRegistered || typeof gsap === 'undefined') return;
@@ -169,7 +150,12 @@
   }
 
   function initLandingHistory(root) {
-    if (!root || root.dataset.landingHistoryInit === '1') return;
+    if (!root) return;
+    if (isMobile(window.innerWidth)) {
+      destroyInstance(root);
+      return;
+    }
+    if (root.dataset.landingHistoryInit === '1') return;
     if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
 
     destroyInstance(root);
@@ -195,7 +181,7 @@
       layoutKey: '',
       sortedEnter: [],
       sortedExit: [],
-      parallaxAllowed: finePointer && !isMobile(window.innerWidth),
+      parallaxAllowed: canUseMouseParallax(window.innerWidth),
     };
 
     root._landingHistory = inst;
@@ -213,7 +199,6 @@
       var vw = window.innerWidth;
       var vh = window.innerHeight;
       var scale = getScale(vw);
-      var mobile = isMobile(vw);
       var fragment = document.createDocumentFragment();
 
       inst.layoutScale = scale;
@@ -221,9 +206,7 @@
       inst.sortedEnter = [];
       inst.sortedExit = [];
 
-      getCardConfigs(mobile).forEach(function (cfg, i) {
-        if (shouldHideCard(cfg)) return;
-
+      getCardConfigs().forEach(function (cfg, i) {
         var w = Math.round(cfg.w * scale);
         var h = Math.round(w / cfg.ar);
         var z = Math.round(cfg.z * scale);
@@ -456,10 +439,14 @@
     function rebuild() {
       var vw = window.innerWidth;
       var vh = window.innerHeight;
+      if (isMobile(vw)) {
+        destroyInstance(root);
+        return;
+      }
       var key = layoutKey(vw, vh);
       if (inst.layoutKey === key) return;
       inst.layoutKey = key;
-      inst.parallaxAllowed = finePointer && !isMobile(vw);
+      inst.parallaxAllowed = canUseMouseParallax(vw);
 
       inst.stopParallax();
       if (inst.timeline) inst.timeline.kill();

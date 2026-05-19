@@ -83,6 +83,13 @@ body {
   overflow-x: clip;
 }
 
+@media (max-width: 767px) {
+  .landing-history,
+  .landing-history-section {
+    display: none !important;
+  }
+}
+
 .landing-history__scroll {
   height: calc(100svh + 78vh);
   position: relative;
@@ -212,12 +219,6 @@ body {
   font-family: 'Sen', system-ui, -apple-system, 'Segoe UI', sans-serif;
 }
 
-@media (max-width: 767px) {
-  .landing-history__headline {
-    font-size: clamp(1.7rem, 0.5rem + 4.5vw, 2.35rem);
-  }
-}
-
 .landing-history__headline-line {
   display: block;
 }
@@ -270,7 +271,7 @@ body {
   z-index: 1;
 }
 
-/* Gradient overlay: JS tarafından enjekte edilir; yalnızca opacity animate edilir (compositor-only) */
+/* Gradient overlay: JS tarafından enjekte edilir; desktop'ta yalnızca opacity animate edilir */
 .prava-bg-overlay {
   position: absolute;
   inset: 0;
@@ -278,6 +279,13 @@ body {
   pointer-events: none;
   will-change: opacity;
   opacity: 0;
+}
+
+@media (max-width: 1023px) {
+  .prava-bg-overlay {
+    opacity: 1;
+    will-change: auto;
+  }
 }
 
 .site-footer__watermark {
@@ -613,10 +621,6 @@ header#site-header.prava-site-header .site-header__utility button {
     opacity 0.2s ease;
 }
 
-header#site-header.prava-site-header.is-concealed-by-scroll {
-  transform: translate3d(0, -100%, 0);
-}
-
 #site-header-gradient {
   transition:
     transform 0.72s var(--header-scroll-ease, cubic-bezier(0.33, 1, 0.45, 1)),
@@ -624,8 +628,14 @@ header#site-header.prava-site-header.is-concealed-by-scroll {
     visibility 0.52s;
 }
 
-#site-header-gradient.is-concealed-by-scroll {
-  transform: translate3d(0, -100%, 0);
+@media (min-width: 1024px) {
+  header#site-header.prava-site-header.is-concealed-by-scroll {
+    transform: translate3d(0, -100%, 0);
+  }
+
+  #site-header-gradient.is-concealed-by-scroll {
+    transform: translate3d(0, -100%, 0);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -2365,6 +2375,10 @@ body.prava-preloader-active {
   color: var(--prava-preloader-title, #fff);
   will-change: transform;
   text-wrap: nowrap;
+}
+
+html.prava-preloader-pending .prava-preloader__char {
+  transform: translateY(-100%);
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -959,7 +959,7 @@
     });
   }
 
-  /* ── Header: aşağı kaydırınca gizle, yukarı kaydırınca göster (animasyonlu) ─ */
+  /* ── Header: aşağı kaydırınca gizle, yukarı kaydırınca göster (yalnızca desktop) ─ */
   function initHeaderScrollConceal() {
     var header = document.getElementById('site-header');
     if (!header) return;
@@ -972,6 +972,10 @@
     var concealed = false;
     var rafId = 0;
 
+    function isDesktopScrollConceal() {
+      return mqDesktop && mqDesktop.matches;
+    }
+
     function setConcealed(on) {
       if (concealed === on) return;
       concealed = on;
@@ -981,6 +985,7 @@
     }
 
     function mustStayVisible() {
+      if (!isDesktopScrollConceal()) return true;
       if (document.body.classList.contains('mega-menu-open')) return true;
       if (miniSearchRoot && miniSearchRoot.classList.contains('mini-search--open')) return true;
       return false;
@@ -1010,6 +1015,13 @@
     }
 
     window.addEventListener('scroll', onScroll, { passive: true });
+
+    if (mqDesktop && typeof mqDesktop.addEventListener === 'function') {
+      mqDesktop.addEventListener('change', function () {
+        if (!mqDesktop.matches) setConcealed(false);
+        lastY = window.scrollY || document.documentElement.scrollTop || 0;
+      });
+    }
   }
 
   /*
@@ -1268,10 +1280,9 @@
     /*
      * Performans stratejisi:
      * Her bölüm için statik gradient içeren bir <div.prava-bg-overlay> DOM'a enjekte edilir.
-     * GSAP yalnızca bu elementin `opacity` değerini (0 → 1) animate eder.
-     * opacity animasyonu compositor thread'de çalışır: repaint yok, style recalc yok,
-     * renk interpolasyonu yok. Baz renk bg-custom-color (#f5f5f3) ile aynıdır; geçiş
-     * bölüm girerken uzun süre düz renk, ortaya doğru gradient belirginleşir.
+     * Desktop (lg+): GSAP yalnızca `opacity` (0 → 1) scroll scrub ile animate eder.
+     * Mobil: geçiş yok; overlay son durumda (opacity 1) sabit kalır.
+     * opacity animasyonu compositor thread'de çalışır: repaint yok, style recalc yok.
      */
     var PRAVA_BG_BASE = '#f5f5f3';
     var bgConfigs = [
@@ -1316,21 +1327,37 @@
       overlay.setAttribute('aria-hidden', 'true');
       bgSection.insertBefore(overlay, bgSection.firstChild);
 
-      gsap.fromTo(
-        overlay,
-        { opacity: 0 },
-        {
-          opacity: 1,
-          ease: cfg.ease || 'power2.in',
-          scrollTrigger: {
-            trigger: bgSection,
-            start: cfg.scrollStart || 'top bottom',
-            end: cfg.scrollEnd || 'center center',
-            scrub: cfg.scrub != null ? cfg.scrub : 0.7,
-            invalidateOnRefresh: true,
-          },
-        }
-      );
+      ScrollTrigger.matchMedia({
+        '(min-width: 1024px)': function () {
+          gsap.set(overlay, { opacity: 0 });
+          var tween = gsap.fromTo(
+            overlay,
+            { opacity: 0 },
+            {
+              opacity: 1,
+              ease: cfg.ease || 'power2.in',
+              scrollTrigger: {
+                trigger: bgSection,
+                start: cfg.scrollStart || 'top bottom',
+                end: cfg.scrollEnd || 'center center',
+                scrub: cfg.scrub != null ? cfg.scrub : 0.7,
+                invalidateOnRefresh: true,
+              },
+            }
+          );
+          return function () {
+            var st = tween.scrollTrigger;
+            if (st) st.kill();
+            tween.kill();
+          };
+        },
+        '(max-width: 1023px)': function () {
+          gsap.set(overlay, { opacity: 1 });
+          return function () {
+            gsap.set(overlay, { clearProps: 'opacity' });
+          };
+        },
+      });
     });
   }
 

@@ -8,7 +8,8 @@
   var STAGGER = 0.02;
   var DUR_PRAVA = 0.9;
   var STAGGER_PRAVA = 0.062;
-  var HOLD = 0.16;
+  var HOLD = 0.24;
+  var START_DELAY = 0.12;
   var CLOSE_DELAY = 0.2;
   var CLOSE_DUR = 0.95;
   var SESSION_KEY = 'prava-preloader-seen';
@@ -140,11 +141,12 @@
     var last = built[built.length - 1];
     var i;
 
+    document.body.classList.add('prava-preloader-active');
+    if (lenis && typeof lenis.stop === 'function') lenis.stop();
+
     var tl = gsap.timeline({
-      onStart: function () {
-        document.body.classList.add('prava-preloader-active');
-        if (lenis && typeof lenis.stop === 'function') lenis.stop();
-      },
+      paused: true,
+      delay: START_DELAY,
       onComplete: function () {
         markPreloaderSeen();
         gsap.set(root, { display: 'none' });
@@ -214,8 +216,14 @@
         yPercent: -100,
         duration: CLOSE_DUR,
         ease: 'power4.out',
-      });
+      }      );
     }
+
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () {
+        tl.play(0);
+      });
+    });
   }
 
   if (typeof gsap !== 'undefined') {
