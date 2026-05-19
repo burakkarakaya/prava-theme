@@ -140,7 +140,7 @@
                     {{ block.settings.subtitle | newline_to_br }}
                   </p>
                 {% endif %}
-                {% capture hero_btn_wrapper %}buttons mt-10 flex flex-col gap-3 sm:flex-row sm:flex-wrap {{ text_align_cls }}{% endcapture %}
+                {% capture hero_btn_wrapper %}buttons mt-4 lg:mt-10 flex flex-col gap-3 sm:flex-row sm:flex-wrap {{ text_align_cls }}{% endcapture %}
                 {% assign hero_slide_buttons = block.settings.slide_buttons %}
                 {% if hero_slide_buttons != blank and hero_slide_buttons.size > 0 %}
                   <div class="{{ hero_btn_wrapper }}">

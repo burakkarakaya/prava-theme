@@ -68,7 +68,6 @@
   var mainEl  = document.querySelector('.hero-main');
   var pagHost = document.getElementById('hero-pagination-custom');
   var btnNext = document.getElementById('hero-next');
-
   if (mainEl) {
   var paginationEnabled =
     mainEl.getAttribute('data-hero-pagination') !== 'false' && !!pagHost;
@@ -968,7 +967,7 @@
     var gradient = document.getElementById('site-header-gradient');
     var miniSearchRoot = document.getElementById('mini-search');
     var scrollThreshold = 12;
-    var deltaMin = 5;
+    var deltaMin = 8;
     var lastY = window.scrollY || document.documentElement.scrollTop || 0;
     var concealed = false;
     var rafId = 0;

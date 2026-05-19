@@ -23,6 +23,13 @@
     "breadcrumb": {
       "nav_aria": "Sayfa yolu",
       "home": "Ana sayfa"
+    },
+    "preloader": {
+      "default_title": "Farklı Ol",
+      "line_1": "Her Adımda",
+      "line_2": "Ailenizin Yanında",
+      "line_3": "Güzel Anılara",
+      "line_4": "PRAVA"
     }
   },
   "products": {

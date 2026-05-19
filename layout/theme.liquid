@@ -78,12 +78,35 @@
       },
     };
   </script>
+  {% if template.name == 'index' and settings.preloader_enable != false %}
+    <script>
+      (function () {
+        var KEY = 'prava-preloader-seen';
+        function isReload() {
+          var nav = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
+          if (nav) return nav.type === 'reload';
+          return !!(performance.navigation && performance.navigation.type === 1);
+        }
+        var seen = false;
+        try {
+          seen = sessionStorage.getItem(KEY) === '1';
+        } catch (e) {}
+        if (seen && !isReload()) {
+          window.__PRAVA_SKIP_PRELOADER = true;
+          document.documentElement.classList.add('prava-preloader-skip');
+        } else {
+          document.documentElement.classList.add('prava-preloader-pending');
+        }
+      })();
+    </script>
+  {% endif %}
 </head>
 <body class="bg-custom-color antialiased text-[14px] text-white min-h-screen flex flex-col">
   <a class="skip-to-content-link sr-only focus:not-sr-only focus:absolute focus:z-[200] focus:m-4 focus:bg-white focus:p-3 focus:text-black focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-neutral-900" href="#MainContent">
     {{ 'general.accessibility.skip_to_content' | t }}
   </a>
 
+  {% render 'site-preloader' %}
   {% render 'site-header' %}
   {% section 'prava-cart-drawer' %}
 
@@ -114,6 +137,9 @@
     window.PRAVA_I18N.mini_search_no_results = {{ 'header.mini_search_no_results' | t | json }};
     window.PRAVA_I18N.mini_search_error = {{ 'header.mini_search_error' | t | json }};
   </script>
+  {% if template.name == 'index' and settings.preloader_enable != false %}
+    <script src="{{ 'js/page-preloader.js' | asset_url }}" defer></script>
+  {% endif %}
   <script src="{{ 'js/main.js' | asset_url }}" defer></script>
   <script src="{{ 'js/intro-karaoke.js' | asset_url }}" defer></script>
   <script src="{{ 'landing-history.js' | asset_url }}" defer></script>

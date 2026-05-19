@@ -1,0 +1,42 @@
+{% comment %}
+  Ana sayfa girişi: footer gradient tam ekran + çift satır metin animasyonu.
+  line_3 (Güzel Anılara): settings.preloader_line_3_enable ile açılır — varsayılan kapalı.
+{% endcomment %}
+{% liquid
+  assign preloader_on = false
+  if template.name == 'index' and settings.preloader_enable
+    assign preloader_on = true
+  endif
+%}
+{% if preloader_on %}
+  {% liquid
+    assign pl_title_color = settings.preloader_title_color | default: '#333333'
+    assign pl_line_3_on = settings.preloader_line_3_enable
+  %}
+  <div
+    id="prava-preloader"
+    class="prava-preloader"
+    role="presentation"
+    aria-hidden="true"
+    style="--prava-preloader-title: {{ pl_title_color }};"
+  >
+    <div class="prava-preloader__stage" aria-hidden="true">
+      <div class="prava-preloader__track" data-track="top"></div>
+      <div class="prava-preloader__track" data-track="bot"></div>
+    </div>
+    <script type="application/json" id="prava-preloader-data">
+      {
+        "steps": [
+          { "track": "top", "text": {{ 'general.preloader.line_1' | t | json }}, "inY": -100, "outY": 100 },
+          { "track": "bot", "text": {{ 'general.preloader.line_2' | t | json }}, "inY": -100, "outY": -100 }
+          {%- if pl_line_3_on -%}
+          ,{ "track": "top", "text": {{ 'general.preloader.line_3' | t | json }}, "inY": -100, "outY": 100 }
+          ,{ "track": "top", "text": {{ 'general.preloader.line_4' | t | json }}, "inY": 100, "outY": -100, "brand": true }
+          {%- else -%}
+          ,{ "track": "top", "text": {{ 'general.preloader.line_4' | t | json }}, "inY": 100, "outY": -100, "brand": true }
+          {%- endif -%}
+        ]
+      }
+    </script>
+  </div>
+{% endif %}

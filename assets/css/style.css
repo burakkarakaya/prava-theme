@@ -596,9 +596,10 @@ html.lenis body {
 
 /* ── Header: aşağı scroll’da yukarı kayar, yukarı scroll’da geri gelir ─── */
 header#site-header.prava-site-header {
+  --header-scroll-ease: cubic-bezier(0.33, 1, 0.45, 1);
   transition-property: transform, background-color, box-shadow, color;
-  transition-duration: 0.38s, 0.28s, 0.2s, 0.28s;
-  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1), ease, ease, ease;
+  transition-duration: 0.72s, 0.28s, 0.2s, 0.28s;
+  transition-timing-function: var(--header-scroll-ease), ease, ease, ease;
 }
 
 header#site-header.prava-site-header img,
@@ -618,8 +619,8 @@ header#site-header.prava-site-header.is-concealed-by-scroll {
 
 #site-header-gradient {
   transition:
-    transform 0.38s cubic-bezier(0.22, 1, 0.36, 1),
-    opacity 0.52s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.72s var(--header-scroll-ease, cubic-bezier(0.33, 1, 0.45, 1)),
+    opacity 0.52s cubic-bezier(0.33, 1, 0.45, 1),
     visibility 0.52s;
 }
 
@@ -2261,3 +2262,118 @@ html.prava-pdp-gallery-modal-open {
 }
 
 .list-cover-image #site-header {position: fixed; background: transparent;}
+
+/* ── Giriş animasyonu (tam ekran gradient + metin) ───────────────────── */
+html.prava-preloader-skip #prava-preloader {
+  display: none !important;
+}
+
+html.prava-preloader-pending,
+html.prava-preloader-pending body {
+  overflow: hidden;
+}
+
+body.prava-preloader-active {
+  overflow: hidden;
+}
+
+.prava-preloader {
+  --prava-preloader-gradient: linear-gradient(135deg, #e9f0eb 0%, #e2c8cf 50%, #c4d8e8 100%);
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100svh;
+  overflow: hidden;
+  transform-origin: top center;
+  background-color: #f5f5f3;
+  background-image: var(--prava-preloader-gradient);
+}
+
+.prava-preloader__stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: min(100%, 92vw);
+  padding: clamp(0.75rem, 3vw, 2rem);
+  gap: 0;
+  line-height: 1;
+  font-size: clamp(1.5rem, 5.5vw + 0.35rem, 6.5rem);
+}
+
+@media (max-width: 767px) {
+  .prava-preloader__stage {
+    font-size: clamp(2.2rem, 10.5vw + 0.25rem, 4.5rem);
+    width: 100%;
+    max-width: 100%;
+    padding-inline: 0.5rem;
+  }
+
+  .prava-preloader__track {
+    height: 1em;
+  }
+
+  .prava-preloader__track + .prava-preloader__track {
+    margin-top: -0.05em;
+  }
+}
+
+.prava-preloader__track {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  height: 0.9em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  font-size: inherit;
+}
+
+.prava-preloader__track + .prava-preloader__track {
+  margin-top: -0.06em;
+}
+
+.prava-preloader__word {
+  position: absolute;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: max-content;
+  max-width: calc(100% - 0.5em);
+  margin-inline: auto;
+  transform-origin: center center;
+  box-sizing: border-box;
+}
+
+.prava-preloader__char-clip {
+  overflow: hidden;
+  display: inline-flex;
+  line-height: 1;
+}
+
+.prava-preloader__char {
+  display: inline-block;
+  font-size: 1em;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.035em;
+  color: var(--prava-preloader-title, #fff);
+  will-change: transform;
+  text-wrap: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .prava-preloader {
+    display: none !important;
+  }
+
+  html.prava-preloader-pending,
+  html.prava-preloader-pending body {
+    overflow: auto;
+  }
+}

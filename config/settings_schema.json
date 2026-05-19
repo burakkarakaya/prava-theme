@@ -23,6 +23,40 @@
     ]
   },
   {
+    "name": "Giriş animasyonu",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Ana sayfada tam ekran gradient ve metin animasyonu (footer ile aynı gradient)."
+      },
+      {
+        "type": "checkbox",
+        "id": "preloader_enable",
+        "label": "Giriş animasyonunu etkinleştir",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "preloader_line_3_enable",
+        "label": "«Güzel Anılara» satırını göster",
+        "default": false,
+        "info": "Kapalıyken bu satır animasyonda atlanır; metin çevirileri saklanır."
+      },
+      {
+        "type": "text",
+        "id": "preloader_title",
+        "label": "Giriş başlığı",
+        "default": "Farklı Ol"
+      },
+      {
+        "type": "color",
+        "id": "preloader_title_color",
+        "label": "Metin rengi",
+        "default": "#ffffff"
+      }
+    ]
+  },
+  {
     "name": "Marka görselleri",
     "settings": [
       {

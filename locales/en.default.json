@@ -23,6 +23,13 @@
     "breadcrumb": {
       "nav_aria": "Breadcrumb",
       "home": "Home"
+    },
+    "preloader": {
+      "default_title": "Be Different",
+      "line_1": "Every Step",
+      "line_2": "By Your Family",
+      "line_3": "Beautiful Memories",
+      "line_4": "Prava"
     }
   },
   "products": {
